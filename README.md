@@ -1,4 +1,4 @@
 jquery-futures
 ==============
 
-Helpers for jQuery Deferred/Promise, allowing for a more "managed callback"/Futures style. Inspired by Twitter Futures.
+A toolkit for managing jQuery Deferred and Promise objects. Inspired by Twitter Futures.
