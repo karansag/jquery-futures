@@ -49,4 +49,15 @@ describe("$.select", function() {
     d3.resolve(3);
     expect(result).toEqual(1);
   });
+  it("provides the other promises in the result", function(){
+    var others;
+    $.select([d1, d2, d3]).done(function(first, rest){
+      others = rest;
+    });
+    d1.resolve(1);
+    d2.resolve(2);
+    d3.resolve(3);
+    expect(others[1]).toEqual(d2);
+    expect(others[0]).toEqual(d1);
+  });
 });
