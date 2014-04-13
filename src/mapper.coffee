@@ -21,3 +21,6 @@ $.select = (promiseArray) ->
     d.resolve(promiseResult, otherPromises)
   (promise.done(_.partial(resolve, promise)) for promise in promiseArray)
   d.promise()
+
+$.join = $.when
+$.collect = (promiseArray) -> $.when(promiseArray...)

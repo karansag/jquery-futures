@@ -54,4 +54,10 @@
     return d.promise();
   };
 
+  $.join = $.when;
+
+  $.collect = function(promiseArray) {
+    return $.when.apply($, promiseArray);
+  };
+
 }).call(this);
