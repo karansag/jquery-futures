@@ -6,7 +6,7 @@
     "Karan Sagar <ksagar1030@gmail.com>"
   ],
   "description": "A toolkit for managing jquery Deferred and Promise objects",
-  "main": "src/mapper.js",
+  "main": "src/futures.js",
   "keywords": [
     "jquery",
     "futures",
