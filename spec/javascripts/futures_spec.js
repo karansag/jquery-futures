@@ -99,10 +99,13 @@ describe("concurrent composition", function() {
 });
 
 describe("failure states", function() {
-  var deferred, innerDeferred;
+  var deferred;
+  beforeEach(function() {
+    deferred = $.Deferred();
+  });
   describe("$.rescue", function() {
+    var innerDeferred;
     beforeEach(function() {
-      deferred = $.Deferred();
       innerDeferred = $.Deferred();
     });
     it("'rescues' a failure state", function() {
@@ -115,6 +118,23 @@ describe("failure states", function() {
         watcher = arg;
       });
       expect(watcher).toEqual('failedArgxx');
+    });
+  });
+
+  describe("$.handle", function() {
+    beforeEach(function() {
+
+    });
+    it("maps a failure onto a new promise", function() {
+      var newProm = $.handle(deferred.promise(), function(failArg) {
+        return failArg + 20;
+      })
+      deferred.reject(7);
+      var watcher;
+      newProm.done(function(result) {
+        watcher = result;
+      });
+      expect(watcher).toEqual(27);
     });
   });
 });

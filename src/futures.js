@@ -76,4 +76,15 @@
     return deferred.promise();
   };
 
+  $.handle = function(prom, fn) {
+    var deferred;
+    deferred = $.Deferred();
+    prom.fail(function() {
+      var args;
+      args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+      return deferred.resolve.call(deferred, fn.apply(null, args));
+    });
+    return deferred.promise();
+  };
+
 }).call(this);

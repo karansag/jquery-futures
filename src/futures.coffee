@@ -33,3 +33,9 @@ $.rescue = (prom, fn) ->
     newPromise.then (newResults...) ->
       deferred.resolve.apply(deferred, newResults)
   deferred.promise()
+
+$.handle = (prom, fn) ->
+  deferred = $.Deferred();
+  prom.fail (args...) ->
+    deferred.resolve.call(deferred, fn.apply(null, args))
+  deferred.promise();
