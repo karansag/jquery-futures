@@ -30,11 +30,11 @@ $.rescue = (prom, fn) ->
   prom.fail (args...) ->
     newPromise = fn.apply(null, args)
     newPromise.then (newResults...) ->
-      deferred.resolve.apply(deferred, newResults)
+      deferred.resolve(newResults...)
   deferred.promise()
 
 $.handle = (prom, fn) ->
   deferred = $.Deferred();
   prom.fail (args...) ->
-    deferred.resolve.call(deferred, fn.apply(null, args))
+    deferred.reject(fn.apply(null, args))
   deferred.promise()

@@ -126,13 +126,13 @@ describe("failure states", function() {
     beforeEach(function() {
 
     });
-    it("maps a failure onto a new promise", function() {
+    it("maps a failure onto a new failure", function() {
       var newProm = $.handle(deferred.promise(), function(failArg) {
         return failArg + 20;
       })
       deferred.reject(7);
       var watcher;
-      newProm.done(function(result) {
+      newProm.fail(function(result) {
         watcher = result;
       });
       expect(watcher).toEqual(27);
