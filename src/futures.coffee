@@ -23,4 +23,13 @@ $.select = (promiseArray) ->
   d.promise()
 
 $.join = $.when
+
 $.collect = (promiseArray) -> $.when(promiseArray...)
+
+$.rescue = (prom, fn) ->
+  deferred = $.Deferred();
+  prom.fail (args...) ->
+    newPromise = fn.apply(null, args)
+    newPromise.then (newResults...) ->
+      deferred.resolve.apply(deferred, newResults)
+  deferred.promise()

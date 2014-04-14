@@ -66,11 +66,11 @@ describe("concurrent composition", function() {
     });
   });
 
-  describe("$.collect", function () {
-    it("joins a list of futures together", function () {
+  describe("$.collect", function() {
+    it("joins a list of futures together", function() {
       var joinedPromise = $.collect([d1, d2, d3]);
       var watcher;
-      joinedPromise.done(function(res1, res2, res3){
+      joinedPromise.done(function(res1, res2, res3) {
         watcher = [res1, res2, res3];
       });
       d1.resolve(1);
@@ -85,7 +85,7 @@ describe("concurrent composition", function() {
     it("joins a varargs number of futures together", function() {
       var joinedPromise = $.join(d1, d2, d3);
       var watcher;
-      joinedPromise.done(function(res1, res2, res3){
+      joinedPromise.done(function(res1, res2, res3) {
         watcher = [res1, res2, res3];
       });
       d1.resolve(1);
@@ -94,6 +94,27 @@ describe("concurrent composition", function() {
       expect(watcher).not.toBeDefined();
       d3.resolve(3);
       expect(watcher).toEqual([1, 2, 3]);
+    });
+  });
+});
+
+describe("failure states", function() {
+  var deferred, innerDeferred;
+  describe("$.rescue", function() {
+    beforeEach(function() {
+      deferred = $.Deferred();
+      innerDeferred = $.Deferred();
+    });
+    it("'rescues' a failure state", function() {
+      var newProm = $.rescue(deferred, function(failArg) {
+        return innerDeferred.resolve(failArg + 'xx').promise();
+      });
+      deferred.reject('failedArg');
+      var watcher;
+      newProm.done(function(arg) {
+        watcher = arg;
+      });
+      expect(watcher).toEqual('failedArgxx');
     });
   });
 });

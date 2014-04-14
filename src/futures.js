@@ -60,4 +60,20 @@
     return $.when.apply($, promiseArray);
   };
 
+  $.rescue = function(prom, fn) {
+    var deferred;
+    deferred = $.Deferred();
+    prom.fail(function() {
+      var args, newPromise;
+      args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+      newPromise = fn.apply(null, args);
+      return newPromise.then(function() {
+        var newResults;
+        newResults = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+        return deferred.resolve.apply(deferred, newResults);
+      });
+    });
+    return deferred.promise();
+  };
+
 }).call(this);
