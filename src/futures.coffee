@@ -37,4 +37,4 @@ $.handle = (prom, fn) ->
   deferred = $.Deferred();
   prom.fail (args...) ->
     deferred.resolve.call(deferred, fn.apply(null, args))
-  deferred.promise();
+  deferred.promise()
