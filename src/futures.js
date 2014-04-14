@@ -54,10 +54,14 @@
     return d.promise();
   };
 
-  $.join = $.when;
+  $.join = function() {
+    var promises;
+    promises = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+    return $.when.apply($, promises).promise();
+  };
 
   $.collect = function(promiseArray) {
-    return $.when.apply($, promiseArray);
+    return $.when.apply($, promiseArray).promise();
   };
 
   $.rescue = function(prom, fn) {

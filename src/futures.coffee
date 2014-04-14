@@ -1,6 +1,6 @@
 $.mapProm = (prom, fn) ->
   d = $.Deferred()
-  prom.done (results...) -> 
+  prom.done (results...) ->
     d.resolve.call d, fn.apply(null, results)
   d.promise()
 
@@ -21,9 +21,9 @@ $.select = (promiseArray) ->
   (promise.done(_.partial(resolve, promise)) for promise in promiseArray)
   d.promise()
 
-$.join = $.when
+$.join = (promises...) -> $.when(promises...).promise()
 
-$.collect = (promiseArray) -> $.when(promiseArray...)
+$.collect = (promiseArray) -> $.when(promiseArray...).promise()
 
 $.rescue = (prom, fn) ->
   deferred = $.Deferred();
