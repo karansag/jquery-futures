@@ -1,37 +1,38 @@
-describe("$.mapProm", function() {
-  it("returns a promise that resolves to the map of the original's value",
-    function() {
-      var orig = $.Deferred();
-      var newPromise = $.mapProm(orig.promise(), function(resp) {
-        return resp + ' something'
+describe("sequential composition", function() {
+  describe("$.mapProm", function() {
+    it("returns a promise that resolves to the map of the original's value",
+      function() {
+        var orig = $.Deferred();
+        var newPromise = $.mapProm(orig.promise(), function(resp) {
+          return resp + ' something'
+        });
+        orig.resolve('cork');
+        var doneRun = 0;
+        newPromise.done(function(result) {
+          doneRun = 1;
+          expect(result).toEqual('cork something');
+        });
+        expect(doneRun).toEqual(1);
       });
-      orig.resolve('cork');
+  });
+  describe("$.flatMap", function() {
+    var outerDeferred, innerFunc;
+    beforeEach(function() {
+      innerFunc = function(d) {
+        return $.Deferred().resolve(d + 10);
+      };
+      outerDeferred = $.Deferred();
+    });
+    it("flatMaps the original function with the new one", function() {
+      var newPromise = $.flatMap(outerDeferred, innerFunc);
+      outerDeferred.resolve(2);
       var doneRun = 0;
       newPromise.done(function(result) {
         doneRun = 1;
-        expect(result).toEqual('cork something');
+        expect(result).toEqual(12);
       });
       expect(doneRun).toEqual(1);
     });
-});
-
-describe("$.flatMap", function() {
-  var outerDeferred, innerFunc;
-  beforeEach(function() {
-    innerFunc = function(d) {
-      return $.Deferred().resolve(d + 10);
-    };
-    outerDeferred = $.Deferred();
-  });
-  it("flatMaps the original function with the new one", function() {
-    var newPromise = $.flatMap(outerDeferred, innerFunc);
-    outerDeferred.resolve(2);
-    var doneRun = 0;
-    newPromise.done(function(result) {
-      doneRun = 1;
-      expect(result).toEqual(12);
-    });
-    expect(doneRun).toEqual(1);
   });
 });
 
