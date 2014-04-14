@@ -1,8 +1,7 @@
 $.mapProm = (prom, fn) ->
   d = $.Deferred()
-  prom.done (results...)->
+  prom.done (results...) -> 
     d.resolve.call d, fn.apply(null, results)
-    return
   d.promise()
 
 $.flatMap = (promise, f) ->

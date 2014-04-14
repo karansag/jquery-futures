@@ -8,7 +8,7 @@
     prom.done(function() {
       var results;
       results = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-      d.resolve.call(d, fn.apply(null, results));
+      return d.resolve.call(d, fn.apply(null, results));
     });
     return d.promise();
   };
