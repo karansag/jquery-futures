@@ -3,7 +3,7 @@ $.mapProm = (prom, fn) ->
   prom.then(
     (results...) -> d.resolve(fn.apply(null, results)),
     (results...) -> d.reject(fn.apply(null, results)))
-  d.promise()
+  Future(d.promise())
 
 $.flatMap = (promise, fn) ->
   deferred = $.Deferred()
@@ -45,3 +45,12 @@ $.handle = (prom, fn) ->
   prom.fail (args...) ->
     deferred.reject(fn.apply(null, args))
   deferred.promise()
+
+methodize = (obj, funcName) -> (fn) -> $[funcName](obj, fn)
+futuredMethod = (obj, funcName) -> _.compose(obj[funcName], Future)
+methods = ['mapProm', 'flatMap', 'handle', 'rescue']
+enchanced = ['done']
+window.Future = (obj) ->
+  (obj[funcName] = methodize(obj, funcName) for funcName in methods)
+  (obj[f] = futuredMethod(obj, f) for f in enchanced)
+  obj

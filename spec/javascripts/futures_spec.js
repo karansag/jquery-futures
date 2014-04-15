@@ -175,3 +175,34 @@ describe("failure states", function() {
     });
   });
 });
+
+describe("wrapping with Future", function () {
+  var deferred, wrapped;
+  beforeEach(function () {
+    deferred = $.Deferred();
+    wrapped = Future(deferred);
+  });
+  it("returns an 'enchanced' deferred/promise", function () {
+    expect(wrapped.mapProm).toBeDefined();
+    expect(wrapped.flatMap).toBeDefined();
+  });
+  it("does the right OO thing", function () {
+    var result1, result2;
+    var newPromise1 = wrapped.mapProm(function(result){
+      return 10 + result;
+    }).done(function(result){ result1 = result;});
+    var newPromise2 = $.mapProm(deferred, function(result){
+      return 10 + result;}).done(function(result){ result2 = result;});
+    deferred.resolve(20);
+    expect(result1).toEqual(result2)
+  });
+  it("allows further chaining", function () {
+    var result1, result2;
+    wrapped.mapProm(function(result){ return 5 + result; }).done(function(r){
+      result1 = r;
+    }).mapProm(function(r){ return 10 + r; }).done(function(r){ result2 = r;});
+    deferred.resolve(2);
+    expect(result1).toEqual(7);
+    expect(result2).toEqual(17);
+  });
+});
