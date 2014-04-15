@@ -1,15 +1,22 @@
 $.mapProm = (prom, fn) ->
   d = $.Deferred()
-  prom.done (results...) ->
-    d.resolve.call d, fn.apply(null, results)
+  prom.then(
+    (results...) -> d.resolve(fn.apply(null, results)),
+    (results...) -> d.reject(fn.apply(null, results)))
   d.promise()
 
-$.flatMap = (promise, f) ->
+$.flatMap = (promise, fn) ->
   deferred = $.Deferred()
-  promise.then (results...)->
-    newPromise = f.apply(null, results)
-    newPromise.then (otherResults...) ->
-      deferred.resolve.apply(deferred, otherResults)
+  reject = (args...) -> deferred.reject(args...)
+  # Note: reject the new deferred if either the inner or outer promise fail
+  promise.then(
+    (results...) ->
+      secondPromise = fn.apply(null, results)
+      secondPromise.then(
+        (otherResults...) -> deferred.resolve.apply(deferred, otherResults),
+        reject)
+    reject)
+
   deferred.promise()
 
 

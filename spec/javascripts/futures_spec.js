@@ -1,8 +1,10 @@
 describe("sequential composition", function() {
   describe("$.mapProm", function() {
-    it("returns a promise that resolves to the map of the original's value",
-      function() {
-        var orig = $.Deferred();
+    var orig;
+    beforeEach(function () {
+        orig = $.Deferred();
+    });
+    it("maps successful resolution values", function() {
         var newPromise = $.mapProm(orig.promise(), function(resp) {
           return resp + ' something'
         });
@@ -14,22 +16,56 @@ describe("sequential composition", function() {
         });
         expect(doneRun).toEqual(1);
       });
+    it("maps failure values", function () {
+      var newPromise = $.mapProm(orig.promise(), function(resp) {
+        return resp + ' something else';
+      });
+      orig.reject('foot');
+      var doneRun = 0;
+      newPromise.fail(function(result) {
+        doneRun = 1;
+        expect(result).toEqual('foot something else');
+      });
+      expect(doneRun).toEqual(1);
+    });
   });
   describe("$.flatMap", function() {
-    var outerDeferred, innerFunc;
+    var outerDeferred, innerFun, newPromise;
     beforeEach(function() {
       innerFunc = function(d) {
         return $.Deferred().resolve(d + 10);
       };
       outerDeferred = $.Deferred();
+      newPromise = $.flatMap(outerDeferred, innerFunc);
     });
-    it("flatMaps the original function with the new one", function() {
-      var newPromise = $.flatMap(outerDeferred, innerFunc);
+    it("chains resolutions if all are succcessful", function() {
       outerDeferred.resolve(2);
       var doneRun = 0;
       newPromise.done(function(result) {
         doneRun = 1;
         expect(result).toEqual(12);
+      });
+      expect(doneRun).toEqual(1);
+    });
+    it("fails the returned promise if the outer deferred fails", function () {
+      outerDeferred.reject(5);
+      var doneRun = 0;
+      newPromise.fail(function(result) {
+        doneRun = 1;
+        expect(result).toEqual(5);
+      });
+      expect(doneRun).toEqual(1);
+    });
+    it("fails the returned promise if the inner deferred fails", function () {
+      var failedInner = $.Deferred();
+      newPromise = $.flatMap(outerDeferred, function(){
+        return failedInner;
+      });
+      failedInner.reject(10);
+      outerDeferred.resolve(2);
+      newPromise.fail(function(result) {
+        doneRun = 1;
+        expect(result).toEqual(10);
       });
       expect(doneRun).toEqual(1);
     });

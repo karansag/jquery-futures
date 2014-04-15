@@ -5,27 +5,36 @@
   $.mapProm = function(prom, fn) {
     var d;
     d = $.Deferred();
-    prom.done(function() {
+    prom.then(function() {
       var results;
       results = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-      return d.resolve.call(d, fn.apply(null, results));
+      return d.resolve(fn.apply(null, results));
+    }, function() {
+      var results;
+      results = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+      return d.reject(fn.apply(null, results));
     });
     return d.promise();
   };
 
-  $.flatMap = function(promise, f) {
-    var deferred;
+  $.flatMap = function(promise, fn) {
+    var deferred, reject;
     deferred = $.Deferred();
+    reject = function() {
+      var args;
+      args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+      return deferred.reject.apply(deferred, args);
+    };
     promise.then(function() {
-      var newPromise, results;
+      var results, secondPromise;
       results = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-      newPromise = f.apply(null, results);
-      return newPromise.then(function() {
+      secondPromise = fn.apply(null, results);
+      return secondPromise.then(function() {
         var otherResults;
         otherResults = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
         return deferred.resolve.apply(deferred, otherResults);
-      });
-    });
+      }, reject);
+    }, reject);
     return deferred.promise();
   };
 
