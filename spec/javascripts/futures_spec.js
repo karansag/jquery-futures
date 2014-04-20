@@ -1,11 +1,11 @@
 describe("sequential composition", function() {
-  describe("$.mapProm", function() {
+  describe("future.map", function() {
     var orig;
     beforeEach(function () {
         orig = $.Deferred();
     });
     it("maps successful resolution values", function() {
-        var newPromise = $.mapProm(orig.promise(), function(resp) {
+        var newPromise = future.map(orig.promise(), function(resp) {
           return resp + ' something'
         });
         orig.resolve('cork');
@@ -17,7 +17,7 @@ describe("sequential composition", function() {
         expect(doneRun).toEqual(1);
       });
     it("maps failure values", function () {
-      var newPromise = $.mapProm(orig.promise(), function(resp) {
+      var newPromise = future.map(orig.promise(), function(resp) {
         return resp + ' something else';
       });
       orig.reject('foot');
@@ -29,14 +29,14 @@ describe("sequential composition", function() {
       expect(doneRun).toEqual(1);
     });
   });
-  describe("$.flatMap", function() {
+  describe("future.flatMap", function() {
     var outerDeferred, innerFun, newPromise;
     beforeEach(function() {
       innerFunc = function(d) {
         return $.Deferred().resolve(d + 10);
       };
       outerDeferred = $.Deferred();
-      newPromise = $.flatMap(outerDeferred, innerFunc);
+      newPromise = future.flatMap(outerDeferred, innerFunc);
     });
     it("chains resolutions if all are succcessful", function() {
       outerDeferred.resolve(2);
@@ -58,7 +58,7 @@ describe("sequential composition", function() {
     });
     it("fails the returned promise if the inner deferred fails", function () {
       var failedInner = $.Deferred();
-      newPromise = $.flatMap(outerDeferred, function(){
+      newPromise = future.flatMap(outerDeferred, function(){
         return failedInner;
       });
       failedInner.reject(10);
@@ -79,10 +79,10 @@ describe("concurrent composition", function() {
     d2 = $.Deferred();
     d3 = $.Deferred();
   });
-  describe("$.select", function() {
+  describe("future.select", function() {
     it("selects the first successful deferred", function() {
       var result;
-      $.select([d1, d2, d3]).done(function(first, rest) {
+      future.select([d1, d2, d3]).done(function(first, rest) {
         result = first;
       });
       d1.resolve(1);
@@ -92,7 +92,7 @@ describe("concurrent composition", function() {
     });
     it("provides the other promises in the result", function() {
       var others;
-      $.select([d1, d2, d3]).done(function(first, rest) {
+      future.select([d1, d2, d3]).done(function(first, rest) {
         others = rest;
       });
       d1.resolve(1);
@@ -103,9 +103,9 @@ describe("concurrent composition", function() {
     });
   });
 
-  describe("$.collect", function() {
+  describe("future.collect", function() {
     it("joins a list of futures together", function() {
-      var joinedPromise = $.collect([d1, d2, d3]);
+      var joinedPromise = future.collect([d1, d2, d3]);
       var watcher;
       joinedPromise.done(function(res1, res2, res3) {
         watcher = [res1, res2, res3];
@@ -118,9 +118,9 @@ describe("concurrent composition", function() {
       expect(watcher).toEqual([1, 2, 3]);
     });
   });
-  describe("$.join", function() {
+  describe("future.join", function() {
     it("joins a varargs number of futures together", function() {
-      var joinedPromise = $.join(d1, d2, d3);
+      var joinedPromise = future.join(d1, d2, d3);
       var watcher;
       joinedPromise.done(function(res1, res2, res3) {
         watcher = [res1, res2, res3];
@@ -140,13 +140,13 @@ describe("failure states", function() {
   beforeEach(function() {
     deferred = $.Deferred();
   });
-  describe("$.rescue", function() {
+  describe("future.rescue", function() {
     var innerDeferred;
     beforeEach(function() {
       innerDeferred = $.Deferred();
     });
     it("'rescues' a failure state", function() {
-      var newProm = $.rescue(deferred, function(failArg) {
+      var newProm = future.rescue(deferred, function(failArg) {
         return innerDeferred.resolve(failArg + 'xx').promise();
       });
       deferred.reject('failedArg');
@@ -158,12 +158,12 @@ describe("failure states", function() {
     });
   });
 
-  describe("$.handle", function() {
+  describe("future.handle", function() {
     beforeEach(function() {
 
     });
     it("maps a failure onto a new failure", function() {
-      var newProm = $.handle(deferred.promise(), function(failArg) {
+      var newProm = future.handle(deferred.promise(), function(failArg) {
         return failArg + 20;
       })
       deferred.reject(7);
