@@ -1,4 +1,4 @@
-describe("sequential composition", function() {
+  describe("sequential composition", function() {
   describe("future.map", function() {
     var orig;
     beforeEach(function () {
@@ -183,24 +183,24 @@ describe("wrapping with Future", function () {
     wrapped = Future(deferred);
   });
   it("returns an 'enchanced' deferred/promise", function () {
-    expect(wrapped.mapProm).toBeDefined();
+    expect(wrapped.map).toBeDefined();
     expect(wrapped.flatMap).toBeDefined();
   });
   it("does the right OO thing", function () {
     var result1, result2;
-    var newPromise1 = wrapped.mapProm(function(result){
+    var newPromise1 = wrapped.map(function(result){
       return 10 + result;
     }).done(function(result){ result1 = result;});
-    var newPromise2 = $.mapProm(deferred, function(result){
+    var newPromise2 = future.map(deferred, function(result){
       return 10 + result;}).done(function(result){ result2 = result;});
     deferred.resolve(20);
     expect(result1).toEqual(result2)
   });
   it("allows further chaining", function () {
     var result1, result2;
-    wrapped.mapProm(function(result){ return 5 + result; }).done(function(r){
+    wrapped.map(function(result){ return 5 + result; }).done(function(r){
       result1 = r;
-    }).mapProm(function(r){ return 10 + r; }).done(function(r){ result2 = r;});
+    }).map(function(r){ return 10 + r; }).done(function(r){ result2 = r;});
     deferred.resolve(2);
     expect(result1).toEqual(7);
     expect(result2).toEqual(17);

@@ -5,7 +5,7 @@ jquery-future v.0.0.1
  */
 
 (function() {
-  var enchanced, futuredMethod, methodize, methods,
+  var methodize, methods,
     __slice = [].slice;
 
   window.future = window.future || {};
@@ -43,7 +43,7 @@ jquery-future v.0.0.1
         return deferred.resolve.apply(deferred, otherResults);
       }, reject);
     }, reject);
-    return deferred.promise();
+    return Future(deferred.promise());
   };
 
   future.select = function(promiseArray) {
@@ -68,17 +68,17 @@ jquery-future v.0.0.1
       promise = promiseArray[_i];
       promise.done(_.partial(resolve, promise));
     }
-    return d.promise();
+    return Future(d.promise());
   };
 
   future.join = function() {
     var promises;
     promises = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-    return $.when.apply($, promises).promise();
+    return Future($.when.apply($, promises).promise());
   };
 
   future.collect = function(promiseArray) {
-    return $.when.apply($, promiseArray).promise();
+    return Future($.when.apply($, promiseArray).promise());
   };
 
   future.rescue = function(prom, fn) {
@@ -94,7 +94,7 @@ jquery-future v.0.0.1
         return deferred.resolve.apply(deferred, newResults);
       });
     });
-    return deferred.promise();
+    return Future(deferred.promise());
   };
 
   future.handle = function(prom, fn) {
@@ -105,32 +105,22 @@ jquery-future v.0.0.1
       args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
       return deferred.reject(fn.apply(null, args));
     });
-    return deferred.promise();
+    return Future(deferred.promise());
   };
 
   methodize = function(obj, funcName) {
     return function(fn) {
-      return $[funcName](obj, fn);
+      return future[funcName](obj, fn);
     };
   };
 
-  futuredMethod = function(obj, funcName) {
-    return _.compose(obj[funcName], Future);
-  };
-
-  methods = ['mapProm', 'flatMap', 'handle', 'rescue'];
-
-  enchanced = ['done'];
+  methods = ['map', 'flatMap', 'handle', 'rescue'];
 
   window.Future = function(obj) {
-    var f, funcName, _i, _j, _len, _len1;
+    var funcName, _i, _len;
     for (_i = 0, _len = methods.length; _i < _len; _i++) {
       funcName = methods[_i];
       obj[funcName] = methodize(obj, funcName);
-    }
-    for (_j = 0, _len1 = enchanced.length; _j < _len1; _j++) {
-      f = enchanced[_j];
-      obj[f] = futuredMethod(obj, f);
     }
     return obj;
   };
