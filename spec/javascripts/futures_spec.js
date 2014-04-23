@@ -6,7 +6,7 @@
     });
     it("maps successful resolution values", function() {
         var newPromise = future.map(orig.promise(), function(resp) {
-          return resp + ' something'
+          return resp + ' something';
         });
         orig.resolve('cork');
         var doneRun = 0;
@@ -165,7 +165,7 @@ describe("failure states", function() {
     it("maps a failure onto a new failure", function() {
       var newProm = future.handle(deferred.promise(), function(failArg) {
         return failArg + 20;
-      })
+      });
       deferred.reject(7);
       var watcher;
       newProm.fail(function(result) {
@@ -194,7 +194,7 @@ describe("wrapping with Future", function () {
     var newPromise2 = future.map(deferred, function(result){
       return 10 + result;}).done(function(result){ result2 = result;});
     deferred.resolve(20);
-    expect(result1).toEqual(result2)
+    expect(result1).toEqual(result2);
   });
   it("allows further chaining", function () {
     var result1, result2;
