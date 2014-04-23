@@ -1,0 +1,32 @@
+{
+  "name": "jquery-futures",
+  "version": "0.0.1",
+  "description": "A Futures library for jQuery's Promises",
+  "main": "src/futures.js",
+  "dependencies": {
+    "jquery": ">=1.8.3",
+    "underscore": "~1.6.0"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.4",
+    "grunt-contrib-jasmine": "~0.6.3"
+  },
+  "scripts": {
+    "test": "grunt test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/karansag/jquery-futures.git"
+  },
+  "keywords": [
+    "jquery",
+    "promises",
+    "futures"
+  ],
+  "author": "Karan Sagar",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/karansag/jquery-futures/issues"
+  },
+  "homepage": "https://github.com/karansag/jquery-futures"
+}

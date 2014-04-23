@@ -5,7 +5,8 @@ jquery-future v.0.0.1
  */
 
 (function() {
-  var __slice = [].slice;
+  var methodize, methods,
+    __slice = [].slice;
 
   window.future = window.future || {};
 
@@ -21,7 +22,7 @@ jquery-future v.0.0.1
       results = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
       return d.reject(fn.apply(null, results));
     });
-    return d.promise();
+    return Future(d.promise());
   };
 
   future.flatMap = function(promise, fn) {
@@ -32,6 +33,8 @@ jquery-future v.0.0.1
       args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
       return deferred.reject.apply(deferred, args);
     };
+
+    /* Note: reject the new deferred if either the inner or outer promise fail */
     promise.then(function() {
       var results, secondPromise;
       results = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
@@ -42,7 +45,7 @@ jquery-future v.0.0.1
         return deferred.resolve.apply(deferred, otherResults);
       }, reject);
     }, reject);
-    return deferred.promise();
+    return Future(deferred.promise());
   };
 
   future.select = function(promiseArray) {
@@ -67,17 +70,17 @@ jquery-future v.0.0.1
       promise = promiseArray[_i];
       promise.done(_.partial(resolve, promise));
     }
-    return d.promise();
+    return Future(d.promise());
   };
 
   future.join = function() {
     var promises;
     promises = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-    return $.when.apply($, promises).promise();
+    return Future($.when.apply($, promises).promise());
   };
 
   future.collect = function(promiseArray) {
-    return $.when.apply($, promiseArray).promise();
+    return Future($.when.apply($, promiseArray).promise());
   };
 
   future.rescue = function(prom, fn) {
@@ -93,7 +96,7 @@ jquery-future v.0.0.1
         return deferred.resolve.apply(deferred, newResults);
       });
     });
-    return deferred.promise();
+    return Future(deferred.promise());
   };
 
   future.handle = function(prom, fn) {
@@ -104,7 +107,27 @@ jquery-future v.0.0.1
       args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
       return deferred.reject(fn.apply(null, args));
     });
-    return deferred.promise();
+    return Future(deferred.promise());
+  };
+
+
+  /* OOP style constructors */
+
+  methodize = function(obj, funcName) {
+    return function(fn) {
+      return future[funcName](obj, fn);
+    };
+  };
+
+  methods = ['map', 'flatMap', 'handle', 'rescue'];
+
+  window.Future = function(obj) {
+    var funcName, _i, _len;
+    for (_i = 0, _len = methods.length; _i < _len; _i++) {
+      funcName = methods[_i];
+      obj[funcName] = methodize(obj, funcName);
+    }
+    return obj;
   };
 
 }).call(this);
