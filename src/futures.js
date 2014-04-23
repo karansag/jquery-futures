@@ -33,6 +33,8 @@ jquery-future v.0.0.1
       args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
       return deferred.reject.apply(deferred, args);
     };
+
+    /* Note: reject the new deferred if either the inner or outer promise fail */
     promise.then(function() {
       var results, secondPromise;
       results = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
@@ -107,6 +109,9 @@ jquery-future v.0.0.1
     });
     return Future(deferred.promise());
   };
+
+
+  /* OOP style constructors */
 
   methodize = function(obj, funcName) {
     return function(fn) {

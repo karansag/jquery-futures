@@ -13,7 +13,7 @@ future.map = (prom, fn) ->
 future.flatMap = (promise, fn) ->
   deferred = $.Deferred()
   reject = (args...) -> deferred.reject(args...)
-  # Note: reject the new deferred if either the inner or outer promise fail
+  ### Note: reject the new deferred if either the inner or outer promise fail ###
   promise.then(
     (results...) ->
       secondPromise = fn.apply(null, results)
@@ -51,6 +51,7 @@ future.handle = (prom, fn) ->
     deferred.reject(fn.apply(null, args))
   Future deferred.promise()
 
+### OOP style constructors ###
 methodize = (obj, funcName) -> (fn) -> future[funcName](obj, fn)
 methods = ['map', 'flatMap', 'handle', 'rescue']
 window.Future = (obj) ->
