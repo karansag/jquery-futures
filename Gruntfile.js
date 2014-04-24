@@ -3,22 +3,31 @@ module.exports = function(grunt) {
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
-    jasmine: {
-      jqueryfutures: {
-        src: "src/**/*.js",
+    coffee: {
+      compile: {
+        files: {
+          'src/futures.js': 'src/futures.coffee'
+        },
         options: {
-          specs: "spec/**/*_spec.js",
-          vendor: [
-            "vendor/*.js",
-            ],
-          version: '2.0.0'
+          sourceMaps: true
         }
+      }
+    },
+    jasmine: {
+      src: "src/**/*.js",
+      options: {
+        specs: "spec/**/*_spec.js",
+        vendor: [
+          "vendor/*.js",
+          ],
+        version: '2.0.0'
       }
     }
   })
 
+  grunt.loadNpmTasks('grunt-contrib-coffee');
   grunt.loadNpmTasks('grunt-contrib-jasmine')
 
   grunt.registerTask('test', ['jasmine'])
-  grunt.registerTask('default', ['test'])
+  grunt.registerTask('default', ['coffee', 'test'])
 };

@@ -1,5 +1,5 @@
 ###
-jquery-future v.0.0.1
+jquery-futures v.0.0.1
 ###
 window.future = window.future or {}
 
