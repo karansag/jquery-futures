@@ -13,10 +13,10 @@ Dependencies:
 
 To install, simply copy and use src/futures.js.
 
-Examples
+API
 ==========================
-Use to chain computations onto deferred objects. For example, to **map** the results of a promise
-future.map (promise, fn => promise)
+Use to chain computations onto deferred objects.
+future.map (promise, fn) => promise
 --------
     var d1 = $.Deferred();
     var d2 = future.map(d1, function(value){ return value * value });
@@ -24,6 +24,42 @@ future.map (promise, fn => promise)
     d2.done(function(result){
         console.log(result)    // => 25
     });
+
+Useful for transforming the value contained in a deferred object.
+
+future.flatMap (promise, fn) => promise
+------
+    var d1 = $.Deferred();
+    var d2 = $.Deferred();
+    var someFunction = function(d1Result){ return d2.resolve(d1Result + 10) }
+    var newPromise = future.flatMap(d1, someFunction);
+    d1.resolve(7);
+    newPromise.done(function(result){
+      console.log(result) // => 17
+    });
+
+Useful for sequential, dependent calls that return deferred. For example, getting a uuid and
+then account data based on that uuid through two AJAX calls.
+
+
+future.join (promise1, promise2, ...) => promise
+-----
+    var query1 = $.Deferred();
+    var query2 = $.Deferred();
+    query1.resolve(6);
+    query2.resolve(4);
+    future.join(query1, query2).done(function(result1, result2){
+      console.log(result1 + result2); // => 10
+    });
+
+Useful for synchronous calls. This directly proxies to jQuery.when. Note that the returned
+promise succeeds if and only if all the passed promises succeed.
+
+future.collect([promise1, promise2])
+----
+(The array version of future.join)
+
+
 
 Note: this library (including the API) is still very much under construction.
 
