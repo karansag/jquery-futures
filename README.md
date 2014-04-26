@@ -69,7 +69,6 @@ seems like too much)*.
     var f = future.map(d, ..).flatMap(..).handle(...)
     var g = Future(d).map(...).flatMap(...).handle(...) // f and g are equivalent
 
-Note: this library (including the API) is still very much under construction.
 
 Testing
 ==================
