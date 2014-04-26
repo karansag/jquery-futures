@@ -13,7 +13,7 @@ Dependencies:
 
 To install, simply copy and use src/futures.js.
 
-API
+API (under construction)
 ==========================
 Use to chain computations onto deferred objects.
 future.map (promise, fn) => promise
