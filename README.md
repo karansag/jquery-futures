@@ -59,7 +59,15 @@ future.collect([promise1, promise2])
 ----
 (The array version of future.join)
 
+Chaining style
+----
+Note that all functions from the previous functions can be chained, OOP-style. Also, we expose
+a Future constructor for the same purpose *(note: the constructor name could be changing, as exporting two globals
+seems like too much)*.
 
+    var d = $.Deferred()
+    var f = future.map(d, ..).flatMap(..).handle(...)
+    var g = Future(d).map(...).flatMap(...).handle(...) // f and g are equivalent
 
 Note: this library (including the API) is still very much under construction.
 
