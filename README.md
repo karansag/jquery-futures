@@ -61,8 +61,8 @@ future.collect([promise1, promise2])
 
 Chaining style
 ----
-Note that all functions from the previous functions can be chained, OOP-style. Also, we expose
-a Future constructor for the same purpose *(note: the constructor name could be changing, as exporting two globals
+Note that all results from the previous functions can be chained, OOP-style. Also, we expose
+a Future constructor if you want to kick things off with it *(note: the constructor name could be changing, as exporting two globals
 seems like too much)*.
 
     var d = $.Deferred()
