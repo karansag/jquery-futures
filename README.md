@@ -61,13 +61,11 @@ future.collect([promise1, promise2])
 
 Chaining style
 ----
-Note that all results from the previous functions can be chained, OOP-style. Also, we expose
-a Future constructor if you want to kick things off with it *(note: the constructor name could be changing, as exporting two globals
-seems like too much)*.
+Note that all results from the previous functions can be chained, OOP-style. Also, we expose a future function to kick off your promises' enhancements
 
     var d = $.Deferred()
     var f = future.map(d, ..).flatMap(..).handle(...)
-    var g = Future(d).map(...).flatMap(...).handle(...) // f and g are equivalent
+    var g = future(d).map(...).flatMap(...).handle(...) // f and g are equivalent
 
 
 Testing

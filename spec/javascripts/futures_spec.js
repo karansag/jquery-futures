@@ -172,11 +172,11 @@ describe("failure states", function() {
   });
 });
 
-describe("wrapping with Future", function() {
+describe("wrapping with future", function() {
   var deferred, wrapped;
   beforeEach(function() {
     deferred = $.Deferred();
-    wrapped = Future(deferred);
+    wrapped = future(deferred);
   });
   it("returns an 'enchanced' deferred/promise", function() {
     expect(wrapped.map).toBeDefined();

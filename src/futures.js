@@ -3,11 +3,29 @@
 jquery-futures v.0.0.1
  */
 
+
+/* OOP style constructors */
+
 (function() {
   var methodize, methods,
     __slice = [].slice;
 
-  window.future = window.future || {};
+  methodize = function(obj, funcName) {
+    return function(fn) {
+      return future[funcName](obj, fn);
+    };
+  };
+
+  methods = ['map', 'flatMap', 'handle', 'rescue'];
+
+  window.future = function(obj) {
+    var funcName, _i, _len;
+    for (_i = 0, _len = methods.length; _i < _len; _i++) {
+      funcName = methods[_i];
+      obj[funcName] = methodize(obj, funcName);
+    }
+    return obj;
+  };
 
   future.map = function(prom, fn) {
     var d;
@@ -21,7 +39,7 @@ jquery-futures v.0.0.1
       results = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
       return d.reject(fn.apply(null, results));
     });
-    return Future(d.promise());
+    return future(d.promise());
   };
 
   future.flatMap = function(promise, fn) {
@@ -44,7 +62,7 @@ jquery-futures v.0.0.1
         return deferred.resolve.apply(deferred, otherResults);
       }, reject);
     }, reject);
-    return Future(deferred.promise());
+    return future(deferred.promise());
   };
 
   future.select = function(promiseArray) {
@@ -69,17 +87,17 @@ jquery-futures v.0.0.1
       promise = promiseArray[_i];
       promise.done(_.partial(resolve, promise));
     }
-    return Future(d.promise());
+    return future(d.promise());
   };
 
   future.join = function() {
     var promises;
     promises = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-    return Future($.when.apply($, promises).promise());
+    return future($.when.apply($, promises).promise());
   };
 
   future.collect = function(promiseArray) {
-    return Future($.when.apply($, promiseArray).promise());
+    return future($.when.apply($, promiseArray).promise());
   };
 
   future.rescue = function(prom, fn) {
@@ -95,7 +113,7 @@ jquery-futures v.0.0.1
         return deferred.resolve.apply(deferred, newResults);
       });
     });
-    return Future(deferred.promise());
+    return future(deferred.promise());
   };
 
   future.handle = function(prom, fn) {
@@ -106,27 +124,7 @@ jquery-futures v.0.0.1
       args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
       return deferred.reject(fn.apply(null, args));
     });
-    return Future(deferred.promise());
-  };
-
-
-  /* OOP style constructors */
-
-  methodize = function(obj, funcName) {
-    return function(fn) {
-      return future[funcName](obj, fn);
-    };
-  };
-
-  methods = ['map', 'flatMap', 'handle', 'rescue'];
-
-  window.Future = function(obj) {
-    var funcName, _i, _len;
-    for (_i = 0, _len = methods.length; _i < _len; _i++) {
-      funcName = methods[_i];
-      obj[funcName] = methodize(obj, funcName);
-    }
-    return obj;
+    return future(deferred.promise());
   };
 
 }).call(this);
