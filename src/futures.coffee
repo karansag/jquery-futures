@@ -2,9 +2,9 @@
 jquery-futures v.0.0.1
 ###
 
-### OOP style constructors ###
 methodize = (obj, funcName) -> (fn) -> future[funcName](obj, fn)
 methods = ['map', 'flatMap', 'handle', 'rescue']
+### OOP style constructor ###
 window.future = (obj) ->
   (obj[funcName] = methodize(obj, funcName) for funcName in methods)
   obj
@@ -13,7 +13,8 @@ future.map = (prom, fn) ->
   d = $.Deferred()
   prom.then(
     (results...) -> d.resolve(fn.apply(null, results)),
-    (results...) -> d.reject(fn.apply(null, results)))
+    (results...) -> d.reject(results...)
+  )
   future(d.promise())
 
 future.flatMap = (promise, fn) ->

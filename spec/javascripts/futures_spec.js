@@ -1,30 +1,26 @@
 describe("sequential composition", function() {
   describe("future.map", function() {
-    var orig;
+    var orig, newPromise, result;
     beforeEach(function() {
+      result = void 0;
       orig = $.Deferred();
-    });
-    it("maps successful resolution values", function() {
-      var newPromise = future.map(orig.promise(), function(resp) {
+      newPromise = future.map(orig.promise(), function(resp) {
         return resp + ' something';
       });
+    });
+    it("maps successful resolution values", function() {
       orig.resolve('cork');
-      var result;
       newPromise.done(function(r) {
         result = r;
       });
       expect(result).toEqual('cork something');
     });
-    it("maps failure values", function() {
-      var newPromise = future.map(orig.promise(), function(resp) {
-        return resp + ' something else';
-      });
-      orig.reject('foot');
-      var result;
-      newPromise.fail(function(r) {
+    it("fails failure values without mapping", function() {
+      orig.reject('bottle');
+      newPromise.fail(function(r){
         result = r;
       });
-      expect(result).toEqual('foot something else');
+      expect(result).toEqual('bottle');
     });
   });
   describe("future.flatMap", function() {

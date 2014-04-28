@@ -3,9 +3,6 @@
 jquery-futures v.0.0.1
  */
 
-
-/* OOP style constructors */
-
 (function() {
   var methodize, methods,
     __slice = [].slice;
@@ -17,6 +14,9 @@ jquery-futures v.0.0.1
   };
 
   methods = ['map', 'flatMap', 'handle', 'rescue'];
+
+
+  /* OOP style constructor */
 
   window.future = function(obj) {
     var funcName, _i, _len;
@@ -37,7 +37,7 @@ jquery-futures v.0.0.1
     }, function() {
       var results;
       results = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-      return d.reject(fn.apply(null, results));
+      return d.reject.apply(d, results);
     });
     return future(d.promise());
   };
