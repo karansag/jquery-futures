@@ -13,7 +13,7 @@ Dependencies:
 
 To install, simply copy and use src/futures.js.
 
-API (under construction)
+API (at least some of it)
 ==========================
 Use to chain computations onto deferred objects.
 future.map (promise, fn) => promise
@@ -55,7 +55,7 @@ future.join (promise1, promise2, ...) => promise
 Useful for synchronous calls. This directly proxies to jQuery.when. Note that the returned
 promise succeeds if and only if all the passed promises succeed.
 
-future.collect([promise1, promise2])
+future.collect ([promise1, promise2,...]) => promise
 ----
 (The array version of future.join)
 
