@@ -4,8 +4,18 @@ jquery-futures v.0.0.1
  */
 
 (function() {
-  var methodize, methods,
+  var methodize, methods, partial,
     __slice = [].slice;
+
+  partial = function() {
+    var args, f;
+    f = arguments[0], args = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
+    return function() {
+      var more;
+      more = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+      return f.apply(null, Array.prototype.concat.call(args, more));
+    };
+  };
 
   methodize = function(obj, funcName) {
     return function(fn) {
@@ -19,11 +29,9 @@ jquery-futures v.0.0.1
   /* OOP style constructor */
 
   window.future = function(obj) {
-    var funcName, _i, _len;
-    for (_i = 0, _len = methods.length; _i < _len; _i++) {
-      funcName = methods[_i];
-      obj[funcName] = methodize(obj, funcName);
-    }
+    methods.forEach(function(funcName) {
+      return obj[funcName] = methodize(obj, funcName);
+    });
     return obj;
   };
 
@@ -66,27 +74,26 @@ jquery-futures v.0.0.1
   };
 
   future.select = function(promiseArray) {
-    var d, promise, resolve, _i, _len;
+    var d, reject, resolve;
     d = $.Deferred();
     resolve = function(promise, promiseResult) {
-      var otherPromises, p;
-      otherPromises = ((function() {
-        var _i, _len, _results;
-        if (p !== promise) {
-          _results = [];
-          for (_i = 0, _len = promiseArray.length; _i < _len; _i++) {
-            p = promiseArray[_i];
-            _results.push(p);
-          }
-          return _results;
-        }
-      })());
+      var otherPromises;
+      otherPromises = promiseArray.filter(function(p) {
+        return p !== promise;
+      });
       return d.resolve(promiseResult, otherPromises);
     };
-    for (_i = 0, _len = promiseArray.length; _i < _len; _i++) {
-      promise = promiseArray[_i];
-      promise.done(_.partial(resolve, promise));
-    }
+    reject = function(promise, promiseResult) {
+      var otherPromises;
+      otherPromises = promiseArray.filter(function(p) {
+        return p !== promise;
+      });
+      return d.reject(promiseResult, otherPromises);
+    };
+    promiseArray.forEach(function(promise) {
+      promise.done(partial(resolve, promise));
+      return promise.fail(partial(reject, promise));
+    });
     return future(d.promise());
   };
 

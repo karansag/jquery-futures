@@ -1,12 +1,13 @@
 ###
 jquery-futures v.0.0.1
 ###
-
+partial = (f, args...) -> (more...) -> f.apply(null, Array::concat.call(args, more))
 methodize = (obj, funcName) -> (fn) -> future[funcName](obj, fn)
+
 methods = ['map', 'flatMap', 'handle', 'rescue']
 ### OOP style constructor ###
 window.future = (obj) ->
-  (obj[funcName] = methodize(obj, funcName) for funcName in methods)
+  methods.forEach (funcName) -> obj[funcName] = methodize(obj, funcName)
   obj
 
 future.map = (prom, fn) ->
@@ -35,9 +36,15 @@ future.flatMap = (promise, fn) ->
 future.select = (promiseArray) ->
   d = $.Deferred()
   resolve = (promise, promiseResult) ->
-    otherPromises = (p for p in promiseArray if p isnt promise)
+    otherPromises = promiseArray.filter (p) -> p != promise
     d.resolve(promiseResult, otherPromises)
-  (promise.done(_.partial(resolve, promise)) for promise in promiseArray)
+  reject = (promise, promiseResult) ->
+    otherPromises = promiseArray.filter (p) -> p != promise
+    d.reject(promiseResult, otherPromises)
+  promiseArray.forEach (promise) ->
+    promise.done(partial(resolve, promise))
+    promise.fail(partial(reject, promise))
+
   future(d.promise())
 
 future.join = (promises...) -> future $.when(promises...).promise()

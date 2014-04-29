@@ -4,8 +4,7 @@
   "description": "A Futures library for jQuery's Promises",
   "main": "src/futures.js",
   "dependencies": {
-    "jquery": ">=1.8.3",
-    "underscore": "~1.6.0"
+    "jquery": ">=1.8.3"
   },
   "devDependencies": {
     "grunt": "~0.4.4",
