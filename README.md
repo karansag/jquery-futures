@@ -9,9 +9,9 @@ Installation and Dependencies
 =============================
 Dependencies:
 * jquery >= 1.8
-* underscore.js >= 1.4.4
+* Natively supported Array.prototype.filter, forEach. [Compatibility](http://kangax.github.io/es5-compat-table/)
 
-To install, simply copy and use src/futures.js.
+To install, simply copy and use src/futures.js. Note that, at the moment, this is only designed for client-side (browser) use.
 
 API (at least some of it)
 ==========================
