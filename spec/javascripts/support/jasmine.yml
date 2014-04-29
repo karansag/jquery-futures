@@ -12,8 +12,6 @@
 #
 src_files:
     - bower_components/jquery/dist/jquery.js
-    - bower_components/jasmine-ajax/lib/mock-ajax.js
-    - bower_components/underscore/underscore.js
     - src/**/*.js
 
 # stylesheets

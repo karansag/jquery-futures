@@ -17,7 +17,7 @@ describe("sequential composition", function() {
     });
     it("fails failure values without mapping", function() {
       orig.reject('bottle');
-      newPromise.fail(function(r){
+      newPromise.fail(function(r) {
         result = r;
       });
       expect(result).toEqual('bottle');
@@ -44,7 +44,7 @@ describe("sequential composition", function() {
       outerDeferred.reject(5);
       var result;
       newPromise.fail(function(r) {
-          result = r;
+        result = r;
       });
       expect(result).toEqual(5);
     });
@@ -65,33 +65,48 @@ describe("sequential composition", function() {
 });
 
 describe("concurrent composition", function() {
-  var d1, d2, d3;
+  var d1, d2, d3, result, others;
   beforeEach(function() {
     d1 = $.Deferred();
     d2 = $.Deferred();
     d3 = $.Deferred();
   });
   describe("future.select", function() {
-    it("selects the first successful deferred", function() {
-      var result;
-      future.select([d1, d2, d3]).done(function(first, rest) {
-        result = first;
+    describe("successful resolution of the first resolved promise", function() {
+      beforeEach(function() {
+        future.select([d1, d2, d3]).done(function(first, rest) {
+          result = first;
+          others = rest;
+        });
+        d1.resolve(1);
+        d2.reject(2);
+        d3.resolve(3);
       });
-      d1.resolve(1);
-      d2.resolve(2);
-      d3.resolve(3);
-      expect(result).toEqual(1);
+      it("selects the first successful promise", function() {
+        expect(result).toEqual(1);
+      });
+      it("provides the other promises in the result", function() {
+        expect(others[0]).toEqual(d2);
+        expect(others[1]).toEqual(d3);
+      });
     });
-    it("provides the other promises in the result", function() {
-      var others;
-      future.select([d1, d2, d3]).done(function(first, rest) {
-        others = rest;
+    describe("failed resolution of the first resolved promise", function() {
+      beforeEach(function() {
+        future.select([d1, d2, d3]).fail(function(first, rest) {
+          result = first;
+          others = rest;
+        });
+        d1.reject(1);
+        d2.resolve(2);
+        d3.resolve(3);
       });
-      d1.resolve(1);
-      d2.resolve(2);
-      d3.resolve(3);
-      expect(others[1]).toEqual(d2);
-      expect(others[0]).toEqual(d1);
+      it("selects the first failed promise", function() {
+        expect(result).toEqual(1);
+      });
+      it("provides the other promises in the result", function() {
+        expect(others[0]).toEqual(d2);
+        expect(others[1]).toEqual(d3);
+      });
     });
   });
 
@@ -203,7 +218,7 @@ describe("wrapping with future", function() {
       return 10 + r;
     }).done(function(r) {
       result2 = r;
-    }).done(function(r){
+    }).done(function(r) {
       result3 = r;
     });
     deferred.resolve(2);
