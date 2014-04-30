@@ -17,7 +17,7 @@ To install, simply copy and use src/futures.js. At the moment, this library's on
 API
 ==========================
 
-future.map (promise, fn) => promise
+future.map (promise, Function) => promise
 --------
     var d1 = $.Deferred();
     var d2 = future.map(d1, function(value){ return value * value });
@@ -28,7 +28,7 @@ future.map (promise, fn) => promise
 
 Useful for transforming the value contained in a deferred object.
 
-future.flatMap (promise, fn) => promise
+future.flatMap (promise, Function) => promise
 ------
     var d1 = $.Deferred();
     var d2 = $.Deferred();
