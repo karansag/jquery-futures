@@ -59,6 +59,12 @@ future.collect ([promise1, promise2,...]) => promise
 ----
 (The array version of future.join)
 
+future.rescue (promise) => promise
+----
+
+future.handle (promise) => promise
+----
+
 Chaining style
 ----
 Note that all results from the previous functions can be chained, OOP-style. Also, we expose a future function to kick off your promises' enhancements
