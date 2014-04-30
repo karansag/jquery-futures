@@ -1,7 +1,8 @@
 jquery-futures
 ==============
 
-A toolkit for managing jQuery Deferred and Promise objects. Inspired by Twitter Futures.
+A toolkit for managing jQuery Deferred and Promise objects, letting you
+easily combine and manipulate them. Inspired by Twitter Futures.
 
 [![Build Status](https://travis-ci.org/karansag/jquery-futures.svg?branch=master)](https://travis-ci.org/karansag/jquery-futures)
 
@@ -11,11 +12,11 @@ Dependencies:
 * jquery >= 1.8
 * Natively supported Array.prototype.filter, forEach. [Compatibility](http://kangax.github.io/es5-compat-table/)
 
-To install, simply copy and use src/futures.js. Note that, at the moment, this is only designed for client-side (browser) use.
+To install, simply copy and use src/futures.js. At the moment, this library's only designed for client-side (browser) use.
 
-API (at least some of it)
+API
 ==========================
-Use to chain computations onto deferred objects.
+
 future.map (promise, fn) => promise
 --------
     var d1 = $.Deferred();
@@ -67,11 +68,21 @@ future.handle (promise) => promise
 
 Chaining style
 ----
-Note that all results from the previous functions can be chained, OOP-style. Also, we expose a future function to kick off your promises' enhancements
+You can chain results from the previous functions, OOP-style. Also, you can run
+your promise through a future function that adds the chaining functions to
+the future you pass it.
 
     var d = $.Deferred()
     var f = future.map(d, ..).flatMap(..).handle(...)
     var g = future(d).map(...).flatMap(...).handle(...) // f and g are equivalent
+
+
+Roadmap (maybe, and in no order)
+========
+
+* Port to idiomatic JS (remove CoffeeScript as main source file)
+* Think about changing main library export from future to Future
+* Work out edge/failure cases in existing functions
 
 
 Testing
