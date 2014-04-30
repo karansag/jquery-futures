@@ -17,7 +17,7 @@ To install, simply copy and use src/futures.js. At the moment, this library's on
 API
 ==========================
 
-future.map (promise, Function) => promise
+future.map (promise, function) => promise
 --------
     var d1 = $.Deferred();
     var d2 = future.map(d1, function(value){ return value * value });
@@ -28,7 +28,7 @@ future.map (promise, Function) => promise
 
 Useful for transforming the value contained in a deferred object.
 
-future.flatMap (promise, Function) => promise
+future.flatMap (promise, function) => promise
 ------
     var d1 = $.Deferred();
     var d2 = $.Deferred();
@@ -60,10 +60,10 @@ future.collect ([promise1, promise2,...]) => promise
 ----
 (The array version of future.join)
 
-future.rescue (promise) => promise
+future.rescue (promise, function) => promise
 ----
 
-future.handle (promise) => promise
+future.handle (promise, function) => promise
 ----
 
 Chaining style
@@ -80,8 +80,8 @@ the future you pass it.
 Roadmap (maybe, and in no order)
 ========
 
-* Port to idiomatic JS (remove CoffeeScript as main source file)
 * Think about changing main library export from future to Future
+* Port to idiomatic JS (remove CoffeeScript as main source file)
 * Work out edge/failure cases in existing functions
 
 
