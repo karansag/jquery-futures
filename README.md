@@ -32,14 +32,14 @@ future.flatMap (promise, function) => promise
 ------
     var d1 = $.Deferred();
     var d2 = $.Deferred();
-    var someFunction = function(d1Result){ return d2.resolve(d1Result + 10) }
-    var newPromise = future.flatMap(d1, someFunction);
+    var d2Getter = function(d1Result){ return d2.resolve(d1Result + 10) }
+    var combinedPromise = future.flatMap(d1, d2Getter);
     d1.resolve(7);
-    newPromise.done(function(result){
+    combinedPromise.done(function(result){
       console.log(result) // => 17
     });
 
-Useful for sequential, dependent calls that return deferred. For example, getting a uuid and
+Useful for sequential, dependent calls that each return promises. For example, getting a uuid and
 then account data based on that uuid through two AJAX calls.
 
 
