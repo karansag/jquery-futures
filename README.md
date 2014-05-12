@@ -53,7 +53,7 @@ future.join (promise1, promise2, ...) => promise
       console.log(result1 + result2); // => 10
     });
 
-Useful for synchronous calls. This directly proxies to jQuery.when. Note that the returned
+Combine promises. This directly proxies to jQuery.when. Note that the returned
 promise succeeds if and only if all the passed promises succeed.
 
 future.collect ([promise1, promise2,...]) => promise
