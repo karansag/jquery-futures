@@ -110,6 +110,7 @@ jquery-futures v.0.0.1
   Future.rescue = function(prom, fn) {
     var deferred;
     deferred = $.Deferred();
+    prom.done(deferred.resolve);
     prom.fail(function() {
       var args, newPromise;
       args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
@@ -126,6 +127,7 @@ jquery-futures v.0.0.1
   Future.handle = function(prom, fn) {
     var deferred;
     deferred = $.Deferred();
+    prom.done(deferred.resolve);
     prom.fail(function() {
       var args;
       args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];

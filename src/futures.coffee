@@ -53,6 +53,7 @@ Future.collect = (promiseArray) -> Future $.when(promiseArray...).promise()
 
 Future.rescue = (prom, fn) ->
   deferred = $.Deferred();
+  prom.done(deferred.resolve)
   prom.fail (args...) ->
     newPromise = fn.apply(null, args)
     newPromise.then (newResults...) ->
@@ -61,6 +62,7 @@ Future.rescue = (prom, fn) ->
 
 Future.handle = (prom, fn) ->
   deferred = $.Deferred();
+  prom.done(deferred.resolve)
   prom.fail (args...) ->
     deferred.reject(fn.apply(null, args))
   Future deferred.promise()

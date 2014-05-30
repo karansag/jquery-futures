@@ -77,12 +77,6 @@ the future you pass it.
     var g = Future(d).map(...).flatMap(...).handle(...) // f and g are equivalent
 
 
-Roadmap?
-========
-
-* Port to idiomatic JS (remove CoffeeScript as main source file)
-* Work out edge/failure cases in existing functions
-
 
 Testing
 ==================
