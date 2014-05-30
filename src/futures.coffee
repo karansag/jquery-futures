@@ -1,5 +1,5 @@
 ###
-jquery-futures v.0.0.1
+jquery-futures v.0.1.0
 ###
 partial = (f, args...) -> (more...) -> f.apply(null, Array::concat.call(args, more))
 methodize = (obj, funcName) -> (fn) -> Future[funcName](obj, fn)
@@ -9,6 +9,7 @@ methods = ['map', 'flatMap', 'handle', 'rescue']
 window.Future = (obj) ->
   methods.forEach (funcName) -> obj[funcName] = methodize(obj, funcName)
   obj
+Future.VERSION = '0.1.0'
 
 Future.map = (prom, fn) ->
   d = $.Deferred()
@@ -66,4 +67,3 @@ Future.handle = (prom, fn) ->
   prom.fail (args...) ->
     deferred.reject(fn.apply(null, args))
   Future deferred.promise()
-

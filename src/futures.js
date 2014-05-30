@@ -1,6 +1,6 @@
 
 /*
-jquery-futures v.0.0.1
+jquery-futures v.0.1.0
  */
 
 (function() {
@@ -34,6 +34,8 @@ jquery-futures v.0.0.1
     });
     return obj;
   };
+
+  Future.VERSION = '0.1.0';
 
   Future.map = function(prom, fn) {
     var d;
