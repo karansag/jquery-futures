@@ -1,8 +1,7 @@
 jquery-futures
 ==============
 
-A toolkit for managing jQuery Deferred and Promise objects, letting you
-easily combine and manipulate them. Inspired by Twitter Futures.
+A toolkit for combining and manpulating asynchronous tasks based on jQuery's Promise implementation. Inspired by Twitter Futures.
 
 [![Build Status](https://travis-ci.org/karansag/jquery-futures.svg?branch=master)](https://travis-ci.org/karansag/jquery-futures)
 
