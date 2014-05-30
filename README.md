@@ -17,10 +17,10 @@ To install, simply copy and use src/futures.js. At the moment, this library's on
 API
 ==========================
 
-future.map (promise, function) => promise
+Future.map (promise, function) => promise
 --------
     var d1 = $.Deferred();
-    var d2 = future.map(d1, function(value){ return value * value });
+    var d2 = Future.map(d1, function(value){ return value * value });
     d1.resolve(5);
     d2.done(function(result){
         console.log(result)    // => 25
@@ -28,12 +28,12 @@ future.map (promise, function) => promise
 
 Useful for transforming the value contained in a deferred object.
 
-future.flatMap (promise, function) => promise
+Future.flatMap (promise, function) => promise
 ------
     var d1 = $.Deferred();
     var d2 = $.Deferred();
     var d2Getter = function(d1Result){ return d2.resolve(d1Result + 10) }
-    var combinedPromise = future.flatMap(d1, d2Getter);
+    var combinedPromise = Future.flatMap(d1, d2Getter);
     d1.resolve(7);
     combinedPromise.done(function(result){
       console.log(result) // => 17
@@ -43,44 +43,43 @@ Useful for sequential, dependent calls that each return promises. For example, g
 then account data based on that uuid through two AJAX calls.
 
 
-future.join (promise1, promise2, ...) => promise
+Future.join (promise1, promise2, ...) => promise
 -----
     var query1 = $.Deferred();
     var query2 = $.Deferred();
     query1.resolve(6);
     query2.resolve(4);
-    future.join(query1, query2).done(function(result1, result2){
+    Future.join(query1, query2).done(function(result1, result2){
       console.log(result1 + result2); // => 10
     });
 
 Combine promises. This directly proxies to jQuery.when. Note that the returned
 promise succeeds if and only if all the passed promises succeed.
 
-future.collect ([promise1, promise2,...]) => promise
+Future.collect ([promise1, promise2,...]) => promise
 ----
-(The array version of future.join)
+(The array version of Future.join)
 
-future.rescue (promise, function) => promise
+Future.rescue (promise, function) => promise
 ----
 
-future.handle (promise, function) => promise
+Future.handle (promise, function) => promise
 ----
 
 Chaining style
 ----
 You can chain results from the previous functions, OOP-style. Also, you can run
-your promise through a future function that adds the chaining functions to
+your promise through a Future function that adds the chaining functions to
 the future you pass it.
 
     var d = $.Deferred()
-    var f = future.map(d, ..).flatMap(..).handle(...)
-    var g = future(d).map(...).flatMap(...).handle(...) // f and g are equivalent
+    var f = Future.map(d, ..).flatMap(..).handle(...)
+    var g = Future(d).map(...).flatMap(...).handle(...) // f and g are equivalent
 
 
-Roadmap (maybe, and in no order)
+Roadmap?
 ========
 
-* Think about changing main library export from future to Future
 * Port to idiomatic JS (remove CoffeeScript as main source file)
 * Work out edge/failure cases in existing functions
 

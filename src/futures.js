@@ -19,7 +19,7 @@ jquery-futures v.0.0.1
 
   methodize = function(obj, funcName) {
     return function(fn) {
-      return future[funcName](obj, fn);
+      return Future[funcName](obj, fn);
     };
   };
 
@@ -28,14 +28,14 @@ jquery-futures v.0.0.1
 
   /* OOP style constructor */
 
-  window.future = function(obj) {
+  window.Future = function(obj) {
     methods.forEach(function(funcName) {
       return obj[funcName] = methodize(obj, funcName);
     });
     return obj;
   };
 
-  future.map = function(prom, fn) {
+  Future.map = function(prom, fn) {
     var d;
     d = $.Deferred();
     prom.then(function() {
@@ -47,10 +47,10 @@ jquery-futures v.0.0.1
       results = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
       return d.reject.apply(d, results);
     });
-    return future(d.promise());
+    return Future(d.promise());
   };
 
-  future.flatMap = function(promise, fn) {
+  Future.flatMap = function(promise, fn) {
     var deferred, reject;
     deferred = $.Deferred();
     reject = function() {
@@ -70,10 +70,10 @@ jquery-futures v.0.0.1
         return deferred.resolve.apply(deferred, otherResults);
       }, reject);
     }, reject);
-    return future(deferred.promise());
+    return Future(deferred.promise());
   };
 
-  future.select = function(promiseArray) {
+  Future.select = function(promiseArray) {
     var d, reject, resolve;
     d = $.Deferred();
     resolve = function(promise, promiseResult) {
@@ -94,20 +94,20 @@ jquery-futures v.0.0.1
       promise.done(partial(resolve, promise));
       return promise.fail(partial(reject, promise));
     });
-    return future(d.promise());
+    return Future(d.promise());
   };
 
-  future.join = function() {
+  Future.join = function() {
     var promises;
     promises = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-    return future($.when.apply($, promises).promise());
+    return Future($.when.apply($, promises).promise());
   };
 
-  future.collect = function(promiseArray) {
-    return future($.when.apply($, promiseArray).promise());
+  Future.collect = function(promiseArray) {
+    return Future($.when.apply($, promiseArray).promise());
   };
 
-  future.rescue = function(prom, fn) {
+  Future.rescue = function(prom, fn) {
     var deferred;
     deferred = $.Deferred();
     prom.fail(function() {
@@ -120,10 +120,10 @@ jquery-futures v.0.0.1
         return deferred.resolve.apply(deferred, newResults);
       });
     });
-    return future(deferred.promise());
+    return Future(deferred.promise());
   };
 
-  future.handle = function(prom, fn) {
+  Future.handle = function(prom, fn) {
     var deferred;
     deferred = $.Deferred();
     prom.fail(function() {
@@ -131,7 +131,7 @@ jquery-futures v.0.0.1
       args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
       return deferred.reject(fn.apply(null, args));
     });
-    return future(deferred.promise());
+    return Future(deferred.promise());
   };
 
 }).call(this);
