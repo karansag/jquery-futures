@@ -23,6 +23,19 @@ describe("sequential composition", function() {
             expect(result).toEqual('bottle');
         });
     });
+    describe("Future.thread", function() {
+        var origPromise, newPromise;
+        beforeEach(function() {
+          origPromise = $.Deferred();
+          var inc = function(x) { return x + 1; };
+          var doubleIt = function(x) { return x * 2; };
+          newPromise = Future.thread(origPromise, inc, doubleIt);
+        });
+        it("threads a deferred value through the list of functions (equivalent to multiple maps)", function() {
+          origPromise.resolve(5);
+          expect(newPromise).toContainDeferredValue(12);
+        });
+    });
     describe("Future.flatMap", function() {
         var outerDeferred, innerFun, newPromise;
         beforeEach(function() {

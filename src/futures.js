@@ -23,7 +23,7 @@ jquery-futures v.0.1.0
     };
   };
 
-  methods = ['map', 'flatMap', 'handle', 'rescue'];
+  methods = ['map', 'flatMap', 'handle', 'rescue', 'thread'];
 
 
   /* OOP style constructor */
@@ -36,6 +36,31 @@ jquery-futures v.0.1.0
   };
 
   Future.VERSION = '0.1.0';
+
+  Future.thread = function() {
+    var d, firstFn, fns, prom, restFns, thread;
+    prom = arguments[0], fns = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
+    d = $.Deferred();
+    firstFn = fns[0];
+    restFns = fns.slice(1);
+    thread = function(seed) {
+      var firstResult;
+      firstResult = firstFn.apply(null, seed);
+      return restFns.reduce(function(acc, f) {
+        return f(acc);
+      }, firstResult);
+    };
+    prom.then(function() {
+      var results;
+      results = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+      return d.resolve(thread(results));
+    }, function() {
+      var results;
+      results = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+      return d.reject.apply(d, results);
+    });
+    return Future(d.promise());
+  };
 
   Future.map = function(prom, fn) {
     var d;
