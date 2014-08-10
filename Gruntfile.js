@@ -17,6 +17,7 @@ module.exports = function(grunt) {
       src: "src/**/*.js",
       options: {
         specs: "spec/**/*_spec.js",
+        helpers: "spec/**/helpers/*.js",
         vendor: [
           "vendor/*.js",
           ],
