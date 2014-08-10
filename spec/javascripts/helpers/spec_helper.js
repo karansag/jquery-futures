@@ -40,6 +40,9 @@ beforeEach(function() {
                     deferred.done(function(r) {
                         actualValue = r;
                     });
+                    deferred.fail(function(r){
+                        actualValue = r;
+                    })
                     var message =
                         "Expected deferred to contain {} but actually contained {}".format(
                             JSON.stringify(expected), JSON.stringify(actualValue));
