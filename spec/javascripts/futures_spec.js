@@ -13,7 +13,7 @@ describe("sequential composition", function() {
         });
         it("fails failure values without mapping", function() {
             orig.reject('bottle');
-            expect(newPromise).toContainDeferredValue('bottle');
+            expect(newPromise).toContainDeferredError('bottle');
         });
     });
     describe("Future.thread", function() {
@@ -44,7 +44,7 @@ describe("sequential composition", function() {
         });
         it("fails the returned promise if the outer deferred fails", function() {
             outerDeferred.reject(5);
-            expect(newPromise).toContainDeferredValue(5);
+            expect(newPromise).toContainDeferredError(5);
         });
         it("fails the returned promise if the inner deferred fails", function() {
             var failedInner = $.Deferred();
@@ -53,7 +53,7 @@ describe("sequential composition", function() {
             });
             failedInner.reject(10);
             outerDeferred.resolve(2);
-            expect(newPromise).toContainDeferredValue(10);
+            expect(newPromise).toContainDeferredError(10);
         });
     });
 });
@@ -151,22 +151,14 @@ describe("failure states", function() {
                 return innerDeferred.resolve(failArg + 'xx').promise();
             });
             deferred.reject('failedArg');
-            var watcher;
-            newProm.done(function(arg) {
-                watcher = arg;
-            });
-            expect(watcher).toEqual('failedArgxx');
+            expect(newProm).toContainDeferredValue('failedArgxx');
         });
         it("passes on success cases to the returned promise", function() {
             var newProm = Future.rescue(deferred, function(failArg) {
                 return innerDeferred.resolve(failArg + 'xx').promise();
             });
             deferred.resolve('passing!');
-            var watcher;
-            newProm.done(function(arg) {
-                watcher = arg;
-            });
-            expect(watcher).toEqual('passing!');
+            expect(newProm).toContainDeferredValue('passing!');
         });
     });
 
@@ -176,22 +168,14 @@ describe("failure states", function() {
                 return failArg + 20;
             });
             deferred.reject(7);
-            var watcher;
-            newProm.fail(function(result) {
-                watcher = result;
-            });
-            expect(watcher).toEqual(27);
+            expect(newProm).toContainDeferredError(27);
         });
         it("passes on success cases to the returned promise", function() {
             var newProm = Future.handle(deferred, function(failArg) {
                 return innerDeferred.resolve(failArg + 'xx').promise();
             });
             deferred.resolve('passing!');
-            var watcher;
-            newProm.done(function(arg) {
-                watcher = arg;
-            });
-            expect(watcher).toEqual('passing!');
+            expect(newProm).toContainDeferredValue('passing!')
         });
     });
 });

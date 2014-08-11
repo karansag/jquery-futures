@@ -24,8 +24,8 @@
 })();
 
 beforeEach(function() {
-    var matchers = {
-        toContainDeferredValue: function(util, customEqualityMatchers) {
+    var baseDeferredMatcher = function(promiseHook) {
+        return function(util, customEqualityMatchers) {
             return {
                 compare: function(actual, expected) {
                     var deferred = actual;
@@ -37,12 +37,9 @@ beforeEach(function() {
                         }
                     }
                     var actualValue = null;
-                    deferred.done(function(r) {
+                    deferred[promiseHook](function(r) {
                         actualValue = r;
                     });
-                    deferred.fail(function(r){
-                        actualValue = r;
-                    })
                     var message =
                         "Expected deferred to contain {} but actually contained {}".format(
                             JSON.stringify(expected), JSON.stringify(actualValue));
@@ -58,6 +55,10 @@ beforeEach(function() {
                 }
             }
         }
+    };
+    var matchers = {
+        toContainDeferredValue: baseDeferredMatcher('done'),
+        toContainDeferredError: baseDeferredMatcher('fail')
     };
     jasmine.addMatchers(matchers);
 });
