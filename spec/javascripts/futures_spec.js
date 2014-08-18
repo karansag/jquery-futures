@@ -16,15 +16,15 @@ describe("sequential composition", function() {
             expect(newPromise).toContainDeferredError('bottle');
         });
     });
-    describe("Future.thread", function() {
+    describe("Future.pipe", function() {
         var origPromise, newPromise;
         beforeEach(function() {
           origPromise = $.Deferred();
           var inc = function(x) { return x + 1; };
           var doubleIt = function(x) { return x * 2; };
-          newPromise = Future.thread(origPromise, inc, doubleIt);
+          newPromise = Future.pipe(origPromise, inc, doubleIt);
         });
-        it("threads a deferred value through the list of functions (equivalent to multiple maps)", function() {
+        it("pipes a deferred value through the list of functions (equivalent to multiple maps)", function() {
           origPromise.resolve(5);
           expect(newPromise).toContainDeferredValue(12);
         });

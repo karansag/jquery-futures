@@ -3,7 +3,7 @@ jquery-futures v.0.1.0
 ###
 partial = (f, args...) -> (more...) -> f.apply(null, Array::concat.call(args, more))
 methodize = (obj, funcName) -> (fn) -> Future[funcName](obj, fn)
-methods = ['map', 'flatMap', 'handle', 'rescue', 'thread']
+methods = ['map', 'flatMap', 'handle', 'rescue', 'pipe']
 ### OOP style constructor ###
 window.Future = (obj) ->
   methods.forEach (funcName) -> obj[funcName] = methodize(obj, funcName)
@@ -11,19 +11,19 @@ window.Future = (obj) ->
 
 Future.VERSION = '0.1.0'
 
-Future.thread = (prom, fns...) ->
+Future.pipe = (prom, fns...) ->
   d = $.Deferred()
   firstFn = fns[0]
   restFns = fns.slice(1)
 
-  thread = (seed) ->
+  pipe = (seed) ->
     firstResult = firstFn.apply(null, seed)
     restFns.reduce(
       (acc, f) -> f(acc),
       firstResult)
 
   prom.then(
-    (results...) -> d.resolve(thread(results)),
+    (results...) -> d.resolve(pipe(results)),
     (results...) -> d.reject(results...)
     )
   Future(d.promise())

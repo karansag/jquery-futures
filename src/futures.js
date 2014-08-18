@@ -23,7 +23,7 @@ jquery-futures v.0.1.0
     };
   };
 
-  methods = ['map', 'flatMap', 'handle', 'rescue', 'thread'];
+  methods = ['map', 'flatMap', 'handle', 'rescue', 'pipe'];
 
 
   /* OOP style constructor */
@@ -37,13 +37,13 @@ jquery-futures v.0.1.0
 
   Future.VERSION = '0.1.0';
 
-  Future.thread = function() {
-    var d, firstFn, fns, prom, restFns, thread;
+  Future.pipe = function() {
+    var d, firstFn, fns, pipe, prom, restFns;
     prom = arguments[0], fns = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
     d = $.Deferred();
     firstFn = fns[0];
     restFns = fns.slice(1);
-    thread = function(seed) {
+    pipe = function(seed) {
       var firstResult;
       firstResult = firstFn.apply(null, seed);
       return restFns.reduce(function(acc, f) {
@@ -53,7 +53,7 @@ jquery-futures v.0.1.0
     prom.then(function() {
       var results;
       results = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-      return d.resolve(thread(results));
+      return d.resolve(pipe(results));
     }, function() {
       var results;
       results = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
