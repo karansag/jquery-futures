@@ -190,7 +190,7 @@ describe("wrapping with Future", function() {
         expect(wrapped.map).toBeDefined();
         expect(wrapped.flatMap).toBeDefined();
     });
-    it("does the right OO thing", function() {
+    it("delegates method calls to the corresponding function, passing the called object as the first parameter", function() {
         var result1, result2;
         var newPromise1 = wrapped.map(function(result) {
             return 10 + result;
@@ -222,5 +222,16 @@ describe("wrapping with Future", function() {
         expect(result1).toEqual(7);
         expect(result2).toEqual(17);
         expect(result3).toEqual(17);
+    });
+    it("supports join", function() {
+        var result1, result2;
+        deferred.resolve(25);
+        var joinedPromise = wrapped.join($.Deferred().resolve(100)).done(function(r1, r2){
+            result1 = r1;
+            result2 = r2;
+        });
+        expect(result1).toEqual(25);
+        expect(result2).toEqual(100);
+        expect(joinedPromise.map(function(a, b){ return a + b })).toContainDeferredValue(125);
     });
 });

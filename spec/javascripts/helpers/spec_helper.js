@@ -50,11 +50,10 @@ beforeEach(function() {
                             {
                                 pass: false,
                                 message: message
-                            }
-                    return result;
+                            };
                 }
-            }
-        }
+            };
+        };
     };
     var matchers = {
         toContainDeferredValue: baseDeferredMatcher('done'),

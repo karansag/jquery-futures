@@ -3,7 +3,7 @@ jquery-futures v.0.1.0
 ###
 partial = (f, args...) -> (more...) -> f.apply(null, Array::concat.call(args, more))
 methodize = (obj, funcName) -> (fn) -> Future[funcName](obj, fn)
-methods = ['map', 'flatMap', 'handle', 'rescue', 'pipe']
+methods = ['map', 'flatMap', 'handle', 'rescue', 'pipe', 'join']
 ### OOP style constructor ###
 window.Future = (obj) ->
   methods.forEach (funcName) -> obj[funcName] = methodize(obj, funcName)

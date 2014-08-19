@@ -23,7 +23,7 @@ jquery-futures v.0.1.0
     };
   };
 
-  methods = ['map', 'flatMap', 'handle', 'rescue', 'pipe'];
+  methods = ['map', 'flatMap', 'handle', 'rescue', 'pipe', 'join'];
 
 
   /* OOP style constructor */
