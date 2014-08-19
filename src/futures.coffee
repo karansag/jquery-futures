@@ -1,5 +1,6 @@
 ###
-jquery-futures v.0.1.0
+jquery-futures v.0.2.0
+Karan Sagar
 ###
 partial = (f, args...) -> (more...) -> f.apply(null, Array::concat.call(args, more))
 methodize = (obj, funcName) -> (fn) -> Future[funcName](obj, fn)
