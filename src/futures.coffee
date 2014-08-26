@@ -1,5 +1,5 @@
 ###
-jquery-futures v.0.2.0
+jquery-futures v.0.2.1
 Karan Sagar
 ###
 partial = (f, args...) -> (more...) -> f.apply(null, Array::concat.call(args, more))
@@ -10,7 +10,7 @@ window.Future = (obj) ->
   methods.forEach (funcName) -> obj[funcName] = methodize(obj, funcName)
   obj
 
-Future.VERSION = '0.1.0'
+Future.VERSION = '0.2.1'
 
 Future.pipe = (prom, fns...) ->
   d = $.Deferred()

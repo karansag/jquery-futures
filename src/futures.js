@@ -1,6 +1,6 @@
 
 /*
-jquery-futures v.0.2.0
+jquery-futures v.0.2.1
 Karan Sagar
  */
 
@@ -36,7 +36,7 @@ Karan Sagar
     return obj;
   };
 
-  Future.VERSION = '0.1.0';
+  Future.VERSION = '0.2.1';
 
   Future.pipe = function() {
     var d, firstFn, fns, pipe, prom, restFns;
