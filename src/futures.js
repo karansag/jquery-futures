@@ -19,8 +19,10 @@ Karan Sagar
   };
 
   methodize = function(obj, funcName) {
-    return function(fn) {
-      return Future[funcName](obj, fn);
+    return function() {
+      var rest_args;
+      rest_args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+      return Future[funcName].apply(Future, [obj].concat(__slice.call(rest_args)));
     };
   };
 

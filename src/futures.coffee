@@ -1,9 +1,9 @@
 ###
-jquery-futures v.0.2.1
+jquery-futures v.0.2.2
 Karan Sagar
 ###
 partial = (f, args...) -> (more...) -> f.apply(null, Array::concat.call(args, more))
-methodize = (obj, funcName) -> (fn) -> Future[funcName](obj, fn)
+methodize = (obj, funcName) -> (rest_args...) -> Future[funcName](obj, rest_args...)
 methods = ['map', 'flatMap', 'handle', 'rescue', 'pipe', 'join']
 ### OOP style constructor ###
 window.Future = (obj) ->

@@ -224,14 +224,16 @@ describe("wrapping with Future", function() {
         expect(result3).toEqual(17);
     });
     it("supports join", function() {
-        var result1, result2;
+        var result1, result2, result3;
         deferred.resolve(25);
-        var joinedPromise = wrapped.join($.Deferred().resolve(100)).done(function(r1, r2){
+        var joinedPromise = wrapped.join($.Deferred().resolve(100), $.Deferred().resolve(200)).done(function(r1, r2, r3){
             result1 = r1;
             result2 = r2;
+            result3 = r3
         });
         expect(result1).toEqual(25);
         expect(result2).toEqual(100);
+        expect(result3).toEqual(200);
         expect(joinedPromise.map(function(a, b){ return a + b })).toContainDeferredValue(125);
     });
 });
