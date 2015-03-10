@@ -1,5 +1,5 @@
 ###
-jquery-futures v.0.2.2
+jquery-futures v.0.3.0
 Karan Sagar
 ###
 partial = (f, args...) -> (more...) -> f.apply(null, Array::concat.call(args, more))
@@ -85,3 +85,27 @@ Future.handle = (prom, fn) ->
   prom.fail (args...) ->
     deferred.reject(fn.apply(null, args))
   Future deferred.promise()
+
+
+Future.retry = (futureClosure, backoffGenerator) ->
+  successXHR = $.Deferred()
+  retryingFunc = ->
+    futureClosure().done(->
+        successXHR.resolve.apply(successXHR, arguments)
+      ).fail(->
+        backoffValue = backoffGenerator()
+        if backoffValue == null
+          successXHR.reject.apply(successXHR, arguments)
+        else
+          setTimeout(retryingFunc, backoffValue)
+      )
+  retryingFunc()
+  successXHR
+
+
+Future.retryWithConstantBackoff = (futureClosure, interval, maxAttempts) ->
+  counter = 0
+  backoffGenerator = () ->
+    counter++
+    if counter < maxAttempts then interval else null
+  Future.retry(futureClosure, backoffGenerator)

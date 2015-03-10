@@ -76,6 +76,17 @@ the future you pass it.
     var g = Future(d).map(...).flatMap(...).handle(...) // f and g are equivalent
 
 
+Future.retry (futureGenerator, backoffGenerator) => promise
+----
+Given a function that returns a promise, returns another promise that will retry the given `futureGenerator` upon failure with a timeout specified by the value returned by the `backoffGenerator` function. Stops retrying when `backoffGenerator` returns null.
+
+Note: calls `futureGenerator` immediately.
+
+
+Future.retryWithConstantBackoff (futureGenerator, interval, maxAttempts) => promise
+----
+A special case of the above, retries the given `futureGenerator` a maximum of maxAttempts times with a constant interval of `interval`.
+
 
 Testing
 ==================

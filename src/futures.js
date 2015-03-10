@@ -1,6 +1,6 @@
 
 /*
-jquery-futures v.0.2.1
+jquery-futures v.0.3.0
 Karan Sagar
  */
 
@@ -164,6 +164,40 @@ Karan Sagar
       return deferred.reject(fn.apply(null, args));
     });
     return Future(deferred.promise());
+  };
+
+  Future.retry = function(futureClosure, backoffGenerator) {
+    var retryingFunc, successXHR;
+    successXHR = $.Deferred();
+    retryingFunc = function() {
+      return futureClosure().done(function() {
+        return successXHR.resolve.apply(successXHR, arguments);
+      }).fail(function() {
+        var backoffValue;
+        backoffValue = backoffGenerator();
+        if (backoffValue === null) {
+          return successXHR.reject.apply(successXHR, arguments);
+        } else {
+          return setTimeout(retryingFunc, backoffValue);
+        }
+      });
+    };
+    retryingFunc();
+    return successXHR;
+  };
+
+  Future.retryWithConstantBackoff = function(futureClosure, interval, maxAttempts) {
+    var backoffGenerator, counter;
+    counter = 0;
+    backoffGenerator = function() {
+      counter++;
+      if (counter < maxAttempts) {
+        return interval;
+      } else {
+        return null;
+      }
+    };
+    return Future.retry(futureClosure, backoffGenerator);
   };
 
 }).call(this);
