@@ -238,33 +238,33 @@ describe("wrapping with Future", function() {
     });
 });
 
-describe('Future.retry', function() {
-    var futureClosure, backoffClosure;
+describe("Future.retry", function() {
+    var futureGenerator, backoffGenerator;
     beforeEach(function() {
         jasmine.clock().install();
     });
     afterEach(function() {
         jasmine.clock().uninstall();
     });
-    describe("if the query in futureClosure returns successfully before the backoffClosure returns null", function() {
+    describe("if the query in futureGenerator returns successfully before the backoffGenerator returns null", function() {
         beforeEach(function() {
             var futureCounter = 0;
             var responses = [$.Deferred().reject("error"), $.Deferred().resolve("success"), $.Deferred().resolve("another success")]
-            futureClosure = function(){
+            futureGenerator = function(){
                 var ret = responses[futureCounter];
                 futureCounter++;
                 return ret;
             }
             var backoffCounter = 0;
             var backoffSeq = [100, 2000, null];
-            backoffClosure = function(){
+            backoffGenerator = function(){
                 var ret = backoffSeq[backoffCounter]
                 backoffCounter++;
                 return ret;
             };
         });
-        it('retries and returns the resolved value', function() {
-            retryXHR = Future.retry(futureClosure, backoffClosure);
+        it("retries and returns the resolved value", function() {
+            retryXHR = Future.retry(futureGenerator, backoffGenerator);
             expect(retryXHR.state()).toEqual("pending");
             jasmine.clock().tick(101);
             expect(retryXHR).toContainDeferredValue('success');
@@ -273,57 +273,57 @@ describe('Future.retry', function() {
             beforeEach(function() {
                 var backoffCounter = 0;
                 var backoffSeq = [0, 200, null];
-                backoffClosure = function(){
+                backoffGenerator = function(){
                     var ret = backoffSeq[backoffCounter]
                     backoffCounter++;
                     return ret;
                 };
             });
-            it('should behave the same', function() {
-                retryXHR = Future.retry(futureClosure, backoffClosure);
+            it("should behave the same", function() {
+                retryXHR = Future.retry(futureGenerator, backoffGenerator);
                 expect(retryXHR.state()).toEqual("pending");
                 jasmine.clock().tick(1);
-                expect(retryXHR).toContainDeferredValue('success');
+                expect(retryXHR).toContainDeferredValue("success");
             });
         });
         it('retries and returns the resolved value', function() {
-            retryXHR = Future.retry(futureClosure, backoffClosure);
+            retryXHR = Future.retry(futureGenerator, backoffGenerator);
             expect(retryXHR.state()).toEqual("pending");
             jasmine.clock().tick(101);
-            expect(retryXHR).toContainDeferredValue('success');
+            expect(retryXHR).toContainDeferredValue("success");
         });
     });
-    describe('if the backoffClosure returns null before futureClosure is successful', function() {
+    describe('if the backoffGenerator returns null before futureGenerator is successful', function() {
         beforeEach(function() {
             var futureCounter = 0;
             var responses = [$.Deferred().reject("error"), $.Deferred().reject("error2"), $.Deferred().resolve("another success")]
-            futureClosure = function(){
+            futureGenerator = function(){
                 var ret = responses[futureCounter];
                 futureCounter++;
                 return ret;
             }
             var backoffCounter = 0;
             var backoffSeq = [100, null];
-            backoffClosure = function(){
+            backoffGenerator = function(){
                 var ret = backoffSeq[backoffCounter]
                 backoffCounter++;
                 return ret;
             };
         });
         it('retries but returns the failure value', function() {
-            retryXHR = Future.retry(futureClosure, backoffClosure);
+            retryXHR = Future.retry(futureGenerator, backoffGenerator);
             expect(retryXHR.state()).toEqual("pending");
             jasmine.clock().tick(101);
-            expect(retryXHR).toContainDeferredError('error2');
+            expect(retryXHR).toContainDeferredError("error2");
         });
     });
 });
 
 describe('Future.retryWithConstantBackoff', function() {
-    var futureClosure;
+    var futureGenerator;
     beforeEach(function() {
         jasmine.clock().install();
-        spyOn(Future, 'retry').and.callThrough();
+        spyOn(Future, "retry").and.callThrough();
     });
     afterEach(function() {
         jasmine.clock().uninstall();
@@ -332,33 +332,33 @@ describe('Future.retryWithConstantBackoff', function() {
         beforeEach(function() {
             var futureCounter = 0;
             var responses = [$.Deferred().reject("error"), $.Deferred().reject("error2"), $.Deferred().resolve("success")]
-            futureClosure = function(){
+            futureGenerator = function(){
                 var ret = responses[futureCounter];
                 futureCounter++;
                 return ret;
-            }
+            };
         });
         it('retries and returns the resolved value', function() {
-            retryXHR = Future.retryWithConstantBackoff(futureClosure, 150, 3);
+            retryXHR = Future.retryWithConstantBackoff(futureGenerator, 150, 3);
             expect(retryXHR.state()).toEqual("pending");
             jasmine.clock().tick(151);
             expect(retryXHR.state()).toEqual("pending");
             jasmine.clock().tick(151);
-            expect(retryXHR).toContainDeferredValue('success');
+            expect(retryXHR).toContainDeferredValue("success");
         });
     });
     describe("if the queries all fail", function() {
         beforeEach(function() {
             var futureCounter = 0;
             var responses = [$.Deferred().reject("error"), $.Deferred().reject("error2"), $.Deferred().resolve("success")]
-            futureClosure = function(){
+            futureGenerator = function(){
                 var ret = responses[futureCounter];
                 futureCounter++;
                 return ret;
-            }
+            };
         });
-        it('retries and returns the resolved value', function() {
-            retryXHR = Future.retryWithConstantBackoff(futureClosure, 150, 2);
+        it("retries and returns the resolved value", function() {
+            retryXHR = Future.retryWithConstantBackoff(futureGenerator, 150, 2);
             expect(retryXHR.state()).toEqual("pending");
             jasmine.clock().tick(151);
             expect(retryXHR).toContainDeferredError("error2");

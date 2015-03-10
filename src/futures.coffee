@@ -87,13 +87,13 @@ Future.handle = (prom, fn) ->
   Future deferred.promise()
 
 
-Future.retry = (futureClosure, backoffClosure) ->
+Future.retry = (futureClosure, backoffGenerator) ->
   successXHR = $.Deferred()
   retryingFunc = ->
     futureClosure().done(->
         successXHR.resolve.apply(successXHR, arguments)
       ).fail(->
-        backoffValue = backoffClosure()
+        backoffValue = backoffGenerator()
         if backoffValue == null
           successXHR.reject.apply(successXHR, arguments)
         else
@@ -102,9 +102,10 @@ Future.retry = (futureClosure, backoffClosure) ->
   retryingFunc()
   successXHR
 
+
 Future.retryWithConstantBackoff = (futureClosure, interval, maxAttempts) ->
   counter = 0
-  backoffClosure = () ->
+  backoffGenerator = () ->
     counter++
     if counter < maxAttempts then interval else null
-  Future.retry(futureClosure, backoffClosure)
+  Future.retry(futureClosure, backoffGenerator)

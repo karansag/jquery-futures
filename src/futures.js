@@ -166,7 +166,7 @@ Karan Sagar
     return Future(deferred.promise());
   };
 
-  Future.retry = function(futureClosure, backoffClosure) {
+  Future.retry = function(futureClosure, backoffGenerator) {
     var retryingFunc, successXHR;
     successXHR = $.Deferred();
     retryingFunc = function() {
@@ -174,7 +174,7 @@ Karan Sagar
         return successXHR.resolve.apply(successXHR, arguments);
       }).fail(function() {
         var backoffValue;
-        backoffValue = backoffClosure();
+        backoffValue = backoffGenerator();
         if (backoffValue === null) {
           return successXHR.reject.apply(successXHR, arguments);
         } else {
@@ -187,9 +187,9 @@ Karan Sagar
   };
 
   Future.retryWithConstantBackoff = function(futureClosure, interval, maxAttempts) {
-    var backoffClosure, counter;
+    var backoffGenerator, counter;
     counter = 0;
-    backoffClosure = function() {
+    backoffGenerator = function() {
       counter++;
       if (counter < maxAttempts) {
         return interval;
@@ -197,7 +197,7 @@ Karan Sagar
         return null;
       }
     };
-    return Future.retry(futureClosure, backoffClosure);
+    return Future.retry(futureClosure, backoffGenerator);
   };
 
 }).call(this);
