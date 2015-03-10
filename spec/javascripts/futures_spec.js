@@ -237,3 +237,84 @@ describe("wrapping with Future", function() {
         expect(joinedPromise.map(function(a, b){ return a + b })).toContainDeferredValue(125);
     });
 });
+
+describe('Future.Util.retry', function() {
+    var futureClosure, backoffClosure;
+    beforeEach(function() {
+        jasmine.clock().install();
+    });
+    afterEach(function() {
+        jasmine.clock().uninstall();
+    });
+    describe("if the query in futureClosure returns successfully before the backoffClosure returns null", function() {
+        beforeEach(function() {
+            var futureCounter = 0;
+            var responses = [$.Deferred().reject("error"), $.Deferred().resolve("success"), $.Deferred().resolve("another success")]
+            futureClosure = function(){
+                var ret = responses[futureCounter];
+                futureCounter++;
+                return ret;
+            }
+            var backoffCounter = 0;
+            var backoffSeq = [100, 2000, null];
+            backoffClosure = function(){
+                var ret = backoffSeq[backoffCounter]
+                backoffCounter++;
+                return ret;
+            };
+        });
+        it('retries and returns the resolved value', function() {
+            retryXHR = Future.Util.retry(futureClosure, backoffClosure);
+            expect(retryXHR.state()).toEqual("pending");
+            jasmine.clock().tick(101);
+            expect(retryXHR).toContainDeferredValue('success');
+        });
+        describe('edge cases (e.g., timeouts of 0', function() {
+            beforeEach(function() {
+                var backoffCounter = 0;
+                var backoffSeq = [0, 200, null];
+                backoffClosure = function(){
+                    var ret = backoffSeq[backoffCounter]
+                    backoffCounter++;
+                    return ret;
+                };
+            });
+            it('should behave the same', function() {
+                retryXHR = Future.Util.retry(futureClosure, backoffClosure);
+                expect(retryXHR.state()).toEqual("pending");
+                jasmine.clock().tick(1);
+                expect(retryXHR).toContainDeferredValue('success');
+            });
+        });
+        it('retries and returns the resolved value', function() {
+            retryXHR = Future.Util.retry(futureClosure, backoffClosure);
+            expect(retryXHR.state()).toEqual("pending");
+            jasmine.clock().tick(101);
+            expect(retryXHR).toContainDeferredValue('success');
+        });
+    });
+    describe('if the backoffClosure returns null before futureClosure is successful', function() {
+        beforeEach(function() {
+            var futureCounter = 0;
+            var responses = [$.Deferred().reject("error"), $.Deferred().reject("error2"), $.Deferred().resolve("another success")]
+            futureClosure = function(){
+                var ret = responses[futureCounter];
+                futureCounter++;
+                return ret;
+            }
+            var backoffCounter = 0;
+            var backoffSeq = [100, null];
+            backoffClosure = function(){
+                var ret = backoffSeq[backoffCounter]
+                backoffCounter++;
+                return ret;
+            };
+        });
+        it('retries but returns the failure value', function() {
+            retryXHR = Future.Util.retry(futureClosure, backoffClosure);
+            expect(retryXHR.state()).toEqual("pending");
+            jasmine.clock().tick(101);
+            expect(retryXHR).toContainDeferredError('error2');
+        });
+    });
+});

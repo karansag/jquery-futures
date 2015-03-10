@@ -85,3 +85,20 @@ Future.handle = (prom, fn) ->
   prom.fail (args...) ->
     deferred.reject(fn.apply(null, args))
   Future deferred.promise()
+
+window.Future.Util = Future.Util or {}
+
+Future.Util.retry = (futureClosure, backoffClosure) ->
+  successXHR = $.Deferred()
+  retryingFunc = ->
+    futureClosure().done(->
+        successXHR.resolve.apply(successXHR, arguments)
+      ).fail(->
+        backoffValue = backoffClosure()
+        if backoffValue == null
+          successXHR.reject.apply(successXHR, arguments)
+        else
+          setTimeout(retryingFunc, backoffValue)
+      )
+  retryingFunc()
+  successXHR

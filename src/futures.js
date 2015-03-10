@@ -1,6 +1,6 @@
 
 /*
-jquery-futures v.0.2.1
+jquery-futures v.0.2.2
 Karan Sagar
  */
 
@@ -164,6 +164,28 @@ Karan Sagar
       return deferred.reject(fn.apply(null, args));
     });
     return Future(deferred.promise());
+  };
+
+  window.Future.Util = Future.Util || {};
+
+  Future.Util.retry = function(futureClosure, backoffClosure) {
+    var retryingFunc, successXHR;
+    successXHR = $.Deferred();
+    retryingFunc = function() {
+      return futureClosure().done(function() {
+        return successXHR.resolve.apply(successXHR, arguments);
+      }).fail(function() {
+        var backoffValue;
+        backoffValue = backoffClosure();
+        if (backoffValue === null) {
+          return successXHR.reject.apply(successXHR, arguments);
+        } else {
+          return setTimeout(retryingFunc, backoffValue);
+        }
+      });
+    };
+    retryingFunc();
+    return successXHR;
   };
 
 }).call(this);
