@@ -238,7 +238,7 @@ describe("wrapping with Future", function() {
     });
 });
 
-describe('Future.Util.retry', function() {
+describe('Future.retry', function() {
     var futureClosure, backoffClosure;
     beforeEach(function() {
         jasmine.clock().install();
@@ -264,7 +264,7 @@ describe('Future.Util.retry', function() {
             };
         });
         it('retries and returns the resolved value', function() {
-            retryXHR = Future.Util.retry(futureClosure, backoffClosure);
+            retryXHR = Future.retry(futureClosure, backoffClosure);
             expect(retryXHR.state()).toEqual("pending");
             jasmine.clock().tick(101);
             expect(retryXHR).toContainDeferredValue('success');
@@ -280,14 +280,14 @@ describe('Future.Util.retry', function() {
                 };
             });
             it('should behave the same', function() {
-                retryXHR = Future.Util.retry(futureClosure, backoffClosure);
+                retryXHR = Future.retry(futureClosure, backoffClosure);
                 expect(retryXHR.state()).toEqual("pending");
                 jasmine.clock().tick(1);
                 expect(retryXHR).toContainDeferredValue('success');
             });
         });
         it('retries and returns the resolved value', function() {
-            retryXHR = Future.Util.retry(futureClosure, backoffClosure);
+            retryXHR = Future.retry(futureClosure, backoffClosure);
             expect(retryXHR.state()).toEqual("pending");
             jasmine.clock().tick(101);
             expect(retryXHR).toContainDeferredValue('success');
@@ -311,10 +311,57 @@ describe('Future.Util.retry', function() {
             };
         });
         it('retries but returns the failure value', function() {
-            retryXHR = Future.Util.retry(futureClosure, backoffClosure);
+            retryXHR = Future.retry(futureClosure, backoffClosure);
             expect(retryXHR.state()).toEqual("pending");
             jasmine.clock().tick(101);
             expect(retryXHR).toContainDeferredError('error2');
+        });
+    });
+});
+
+describe('Future.retryWithConstantBackoff', function() {
+    var futureClosure;
+    beforeEach(function() {
+        jasmine.clock().install();
+        spyOn(Future, 'retry').and.callThrough();
+    });
+    afterEach(function() {
+        jasmine.clock().uninstall();
+    });
+    describe("if the query returns successfully", function() {
+        beforeEach(function() {
+            var futureCounter = 0;
+            var responses = [$.Deferred().reject("error"), $.Deferred().reject("error2"), $.Deferred().resolve("success")]
+            futureClosure = function(){
+                var ret = responses[futureCounter];
+                futureCounter++;
+                return ret;
+            }
+        });
+        it('retries and returns the resolved value', function() {
+            retryXHR = Future.retryWithConstantBackoff(futureClosure, 150, 3);
+            expect(retryXHR.state()).toEqual("pending");
+            jasmine.clock().tick(151);
+            expect(retryXHR.state()).toEqual("pending");
+            jasmine.clock().tick(151);
+            expect(retryXHR).toContainDeferredValue('success');
+        });
+    });
+    describe("if the queries all fail", function() {
+        beforeEach(function() {
+            var futureCounter = 0;
+            var responses = [$.Deferred().reject("error"), $.Deferred().reject("error2"), $.Deferred().resolve("success")]
+            futureClosure = function(){
+                var ret = responses[futureCounter];
+                futureCounter++;
+                return ret;
+            }
+        });
+        it('retries and returns the resolved value', function() {
+            retryXHR = Future.retryWithConstantBackoff(futureClosure, 150, 2);
+            expect(retryXHR.state()).toEqual("pending");
+            jasmine.clock().tick(151);
+            expect(retryXHR).toContainDeferredError("error2");
         });
     });
 });

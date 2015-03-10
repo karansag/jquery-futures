@@ -166,9 +166,7 @@ Karan Sagar
     return Future(deferred.promise());
   };
 
-  window.Future.Util = Future.Util || {};
-
-  Future.Util.retry = function(futureClosure, backoffClosure) {
+  Future.retry = function(futureClosure, backoffClosure) {
     var retryingFunc, successXHR;
     successXHR = $.Deferred();
     retryingFunc = function() {
@@ -186,6 +184,20 @@ Karan Sagar
     };
     retryingFunc();
     return successXHR;
+  };
+
+  Future.retryWithConstantBackoff = function(futureClosure, interval, maxAttempts) {
+    var backoffClosure, counter;
+    counter = 0;
+    backoffClosure = function() {
+      counter++;
+      if (counter < maxAttempts) {
+        return interval;
+      } else {
+        return null;
+      }
+    };
+    return Future.retry(futureClosure, backoffClosure);
   };
 
 }).call(this);

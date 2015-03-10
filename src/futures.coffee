@@ -86,9 +86,8 @@ Future.handle = (prom, fn) ->
     deferred.reject(fn.apply(null, args))
   Future deferred.promise()
 
-window.Future.Util = Future.Util or {}
 
-Future.Util.retry = (futureClosure, backoffClosure) ->
+Future.retry = (futureClosure, backoffClosure) ->
   successXHR = $.Deferred()
   retryingFunc = ->
     futureClosure().done(->
@@ -102,3 +101,10 @@ Future.Util.retry = (futureClosure, backoffClosure) ->
       )
   retryingFunc()
   successXHR
+
+Future.retryWithConstantBackoff = (futureClosure, interval, maxAttempts) ->
+  counter = 0
+  backoffClosure = () ->
+    counter++
+    if counter < maxAttempts then interval else null
+  Future.retry(futureClosure, backoffClosure)
