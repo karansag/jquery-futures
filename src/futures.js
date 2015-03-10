@@ -1,6 +1,6 @@
 
 /*
-jquery-futures v.0.2.2
+jquery-futures v.0.3.0
 Karan Sagar
  */
 

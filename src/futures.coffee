@@ -1,5 +1,5 @@
 ###
-jquery-futures v.0.2.2
+jquery-futures v.0.3.0
 Karan Sagar
 ###
 partial = (f, args...) -> (more...) -> f.apply(null, Array::concat.call(args, more))
